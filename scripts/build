@@ -23,8 +23,8 @@ emitstatus()
 	STATFD=$1
 	shift
 
-	( eval $* )
-	echo $? 1>&${STATFD}
+	( eval ${1+"$@"} )
+	eval "echo $? 1>&${STATFD}"
 }
 
 do_identify_packages()
@@ -51,9 +51,11 @@ do_process_scripts()
 ##	process
 
 exec 3>&1
-STATUSLIST=` { emitstatus 4 do_identify_packages ${1+"$@"} \
-		| emitstatus 4 do_identify_scriptdirs \
-		| emitstatus 4 do_process_scripts 1>&3 ; } 4>&1 `
+OFD=3
+SFD=4
+eval "STATUSLIST=\` { emitstatus ${SFD} do_identify_packages $@ \
+		| emitstatus ${SFD} do_identify_scriptdirs \
+		| emitstatus ${SFD} do_process_scripts 1>&${OFD} ; } ${SFD}>&1 \`"
 exec 3>&- 4>&-
 
 case ${STATUSLIST} in
