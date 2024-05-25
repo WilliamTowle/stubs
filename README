@@ -25,3 +25,18 @@ absense of software not yet built will abort the build, rather than
 automatically prompting the necessary builds. Individual build steps
 can be managed by Makefiles or shell scripts, which alleviates some
 instances where this is a problem.
+
+
+Build Process
+=============
+
+  At the top level of its configuration, STUBS has settings for where
+temporary directories should reside. The next level down is
+configuration for the current project, which has some number of stages
+and further files for each that list the packages to be built. Top
+level configuration can be reported and modified through
+scripts/stubs-configure and project build stages through
+scripts/project-configure.
+  The stage configuration files are lists of the packages to be
+built and contain a hint regarding how they should be invoked to do
+their job.
