@@ -1,0 +1,116 @@
+#!/bin/sh
+##	stubs-configure		STUBS (c)1999-2010 William Towle
+##	Last modified		2010-12-28, WmT
+##	Purpose			manage directory layout
+#
+#*   Open Source software - copyright and GPLv2 apply. Briefly:       *
+#*    - No warranty/guarantee of fitness, use is at own risk          *
+#*    - No restrictions on strictly-private use/copying/modification  *
+#*    - No re-licensing this work under more restrictive terms        *
+#*    - Redistributing? Include/offer to deliver original source      *
+#*   Philosophy/full details at http://www.gnu.org/copyleft/gpl.html  *
+
+BINDIR=`dirname $0`
+LIBDIR=${BINDIR}/lib
+
+#. ${LIBDIR}/stubs-config.sh || exit 1
+. ${LIBDIR}/lib-config.sh
+lib_init stubs
+
+do_show()
+{
+	stubs_do_show
+}
+
+configure_buildroot()
+{
+	if [ -z "$1" ] ; then
+		stubs_configure_buildroot
+	else
+		stubs_configure_buildroot ${1+"$@"}
+	fi
+}
+
+configure_insttemp()
+{
+	if [ -z "$1" ] ; then
+		stubs_configure_insttemp
+	else
+		stubs_configure_insttemp ${1+"$@"}
+	fi
+}
+
+configure_sourcetree()
+{
+	if [ -z "$1" ] ; then
+		stubs_configure_sourcetree
+	else
+		stubs_configure_sourcetree ${1+"$@"}
+	fi
+}
+
+configure_projconf()
+{
+	if [ -z "$1" ] ; then
+		stubs_configure_projconf
+	else
+		stubs_configure_projconf ${1+"$@"}
+	fi
+}
+
+configure_tctree()
+{
+	if [ -z "$1" ] ; then
+		stubs_configure_tctree
+	else
+		stubs_configure_tctree ${1+"$@"}
+	fi
+}
+
+configure_buildroot()
+{
+	if [ -z "$1" ] ; then
+		stubs_configure_buildroot
+	else
+		stubs_configure_buildroot ${1+"$@"}
+	fi
+}
+
+
+
+
+
+##
+##	main program
+##
+
+ACTION=$1
+[ "$1" ] && shift
+case ${ACTION} in
+show)	## show project settings
+	do_show || exit 1
+;;
+projconf)	## show/set current-project settings file
+	configure_projconf ${1+"$@"} || exit 1
+;;
+buildroot)	## show/set root directory of builds
+	configure_buildroot ${1+"$@"} || exit 1
+;;
+insttemp)	## show/set root directory of insttemp
+	configure_insttemp ${1+"$@"} || exit 1
+;;
+sourcetree)	## show/set sources directory
+	configure_sourcetree ${1+"$@"} || exit 1
+;;
+tctree)		## show/set toolchain-install directory
+	configure_tctree ${1+"$@"} || exit 1
+;;
+*)
+	if [ "${ACTION}" -a "${ACTION}" != 'help' ] ; then
+		echo "$0: Unrecognised command '${ACTION}'"
+	fi
+	echo "$0: Usage:"
+	grep "^[0-9a-z-]*)" $0 | sed "s/^/	/"
+	exit 1
+;;
+esac

@@ -1,0 +1,148 @@
+#!/bin/sh
+##	STUBS (c) and GPLv2 1999-2010 Wm. Towle
+##	Purpose			build control script
+##	Last modified		WmT, 2010-12-09
+#
+#*   Open Source software - copyright and GPLv2 apply. Briefly:       *
+#*    - No warranty/guarantee of fitness, use is at own risk          *
+#*    - No restrictions on strictly-private use/copying/modification  *
+#*    - No re-licensing this work under more restrictive terms        *
+#*    - Redistributing? Include/offer to deliver original source      *
+#*   Philosophy/full details at http://www.gnu.org/copyleft/gpl.html  *
+
+TOPLEV=${PWD}
+BINDIR=`dirname $0`
+LIBDIR=${BINDIR}/lib
+
+. ${LIBDIR}/lib-config.sh
+lib_init stage package
+
+emitstatus()
+{
+	STATFD=$1
+	shift
+
+	( eval $* )
+	echo $? 1>&${STATFD}
+}
+
+do_identify_packages()
+{
+# TODO: accept 'stage <n>' and 'all'
+# FUTURE: accept names of specific package-script-dirs?
+# FUTURE: appears in 'build' too -- refactor
+	stageconf_query_packages ${1+"$@"}
+}
+
+##do_query_packagesource()
+##{
+##	EXTENT=$1
+##	shift
+##
+##	case ${EXTENT} in
+##	all)
+##		query_all_buildspec \
+##			| query_buildspec_emit packagedir \
+##			| while read PKGDIR ; do \
+##				query_packagedir_emit source ${PKGDIR} || exit 1 ;\
+##				done
+##	;;
+##	stage)
+##		query_stage_buildspec $* \
+##			| query_buildspec_emit packagedir \
+##			| while read PKGDIR ; do \
+##				query_packagedir_emit source ${PKGDIR} || exit 1 ;\
+##				done
+##	;;
+##	*)
+##		query_packagedir_emit source ${EXTENT} || exit 1
+##	;;
+##	esac
+##}
+
+
+do_identify_scriptdirs()
+{
+	while read LINE ; do
+		pkgconf_transform_stageconf buildspec ${LINE}
+	done
+}
+
+do_process_scripts()
+{
+	while read LINE ; do
+		set -- ${LINE}
+		PKGDIR=$1
+		PKGCFG=$3
+
+		pkgconf_emit_details ${CMDARG} ${PKGDIR}/${PKGCFG}
+	done
+}
+
+do_query_stageconf()
+{
+	exec 3>&1
+	STATUSLIST=` { emitstatus 4 do_identify_packages ${1+"$@"} \
+		1>&3 ; } 4>&1 `
+	exec 3>&- 4>&-
+
+	case ${STATUSLIST} in
+	*[1-9]*)	echo "$0: Failed; captured exit codes were:" ${STATUSLIST} 1>&2
+			exit 1 ;;
+	*)		#!NO echo "$0: OK"
+			exit 0 ;;
+	esac
+}
+
+do_query_packagedata()
+{
+	EMITDATA=$1
+	if [ -z "${EMITDATA}" ] ; then
+		echo "do_query_packageurls(): No EMITDATA" 1>&2
+		exit 1
+	fi
+
+	exec 3>&1
+	STATUSLIST=` { emitstatus 4 do_identify_packages ${1+"$@"} \
+		| emitstatus 4 do_identify_scriptdirs \
+		| emitstatus 4 do_process_scripts ${EMITDATA} \
+		1>&3 ; } 4>&1 `
+	exec 3>&- 4>&-
+
+	case ${STATUSLIST} in
+	*[1-9]*)	echo "$0: Failed; captured exit codes were:" ${STATUSLIST} 1>&2
+			exit 1 ;;
+	*)		#!NO echo "$0: OK"
+			exit 0 ;;
+	esac
+}
+
+
+##
+##	main program
+##
+
+CMDARG=$1
+[ "$1" ] && shift
+case ${CMDARG} in
+stageconf)		## debug stage configuration
+	do_query_stageconf $* || exit 1
+;;
+checkdirs)		## debug stageconf transformation
+	do_query_packagedata $* || exit 1
+;;
+urls)			## query remote urls
+	do_query_packagedata $* || exit 1
+;;
+tarballs)		## query local tarball store
+	do_query_packagedata $* || exit 1
+;;
+*)
+	if [ -n "${CMDARG}" -a "${CMDARG}" != 'help' ] ; then
+		echo "$0: Unrecognised command '${CMDARG}'"
+	fi
+	echo "$0: Usage:"
+	grep "^[0-9a-z-]*)" $0 | sed "s/^/	/"
+	exit 1
+;;
+esac
