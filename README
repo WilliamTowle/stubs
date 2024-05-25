@@ -1,0 +1,27 @@
+STUBS
+=====
+
+
+Overview
+--------
+
+* What it is
+
+  The STUBS Toolchain and Utility Build Suite is a set of scripts
+driven by pre-written configuration files, which builds one or more
+software packages in sequence. STUBS is designed to work in very
+minimal environments -including those without 'make'- and URLs are
+included to permit downloading source and patches beforehand. Among
+configuration files and scripts provided are the facilities to create
+boot media for Franki/Earlgrey Linux (one of several example
+busybox- and uClibc-based Linux environments) and the intention is
+that STUBS can enable such a system to rebuild itself.
+
+* What it Isn't
+
+  STUBS is not a replacement for 'make'; it assumes the dependencies
+any packages have will have been satisfied in advance, i.e. the
+absense of software not yet built will abort the build, rather than
+automatically prompting the necessary builds. Individual build steps
+can be managed by Makefiles or shell scripts, which alleviates some
+instances where this is a problem.
