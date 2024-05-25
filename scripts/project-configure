@@ -13,9 +13,7 @@
 BINDIR=`dirname $0`
 LIBDIR=${BINDIR}/lib
 
-#. ${LIBDIR}/proj-config.sh || exit 1
-. ${LIBDIR}/lib-config.sh
-lib_init project
+. ${LIBDIR}/project.sh
 
 do_show()
 {

@@ -13,9 +13,7 @@
 BINDIR=`dirname $0`
 LIBDIR=${BINDIR}/lib
 
-#. ${LIBDIR}/stubs-config.sh || exit 1
-. ${LIBDIR}/lib-config.sh
-lib_init stubs
+. ${LIBDIR}/stubs.sh
 
 do_show()
 {

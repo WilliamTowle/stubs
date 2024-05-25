@@ -9,6 +9,9 @@
 #*    - Redistributing? Include/offer to deliver original source      *
 #*   Philosophy/full details at http://www.gnu.org/copyleft/gpl.html  *
 
+
+[ "${HAVE_LIB_PACKAGE}" != 'y' ] || return
+
 PROJLIB_PKGCONF=`dirname ${STUBSLIB_CFG}`/package-conf
 
 pkgconf_emit_details()
@@ -278,3 +281,6 @@ pkgconf_build_package()
 		[ "${CLEAN}" = 'n' ] || rm -rf ${BUILDTEMP}
 	fi
 }
+
+
+HAVE_LIB_PACKAGE=y

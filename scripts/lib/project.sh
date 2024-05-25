@@ -9,11 +9,14 @@
 #*    - Redistributing? Include/offer to deliver original source      *
 #*   Philosophy/full details at http://www.gnu.org/copyleft/gpl.html  *
 
+
+[ "${HAVE_LIB_PROJECT}" != 'y' ] || return
+
 PROJLIB_CFG_LOADED=n
 PROJLIB_PREFIX=PROJECT
 
-. ${LIBDIR}/lib-config.sh
-lib_init stubs utils
+. ${LIBDIR}/stubs.sh
+. ${LIBDIR}/utils.sh
 
 proj_envfile_load()
 {
@@ -140,3 +143,5 @@ proj_configure_target_cpu()
 
 	echo "Target CPU:" ${PROJECT_TARGET_CPU:-UNSET}
 }
+
+HAVE_LIB_PROJECT=y

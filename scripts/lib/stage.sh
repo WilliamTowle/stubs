@@ -9,8 +9,11 @@
 #*    - Redistributing? Include/offer to deliver original source      *
 #*   Philosophy/full details at http://www.gnu.org/copyleft/gpl.html  *
 
-. ${LIBDIR}/lib-config.sh
-lib_init project utils
+
+[ "${HAVE_LIB_STAGE}" != 'y' ] || return
+
+. ${LIBDIR}/project.sh
+. ${LIBDIR}/utils.sh
 
 stageconf_emit_all()
 {
@@ -102,3 +105,5 @@ stageconf_query_packages()
 	;;
 	esac
 }
+
+HAVE_LIB_STAGE=y

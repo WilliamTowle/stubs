@@ -10,6 +10,9 @@
 #*    - Redistributing? Include/offer to deliver original source      *
 #*   Philosophy/full details at http://www.gnu.org/copyleft/gpl.html  *
 
+
+[ "${HAVE_LIB_ENVFILE}" != 'y' ] || return
+
 env_envfile_load()
 {
 	FILEPATH=$1
@@ -96,3 +99,6 @@ env_configure_value()
 
 	eval "${VARNAME}=${VAL}"
 }
+
+
+HAVE_LIB_ENVFILE=y

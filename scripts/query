@@ -14,8 +14,8 @@ TOPLEV=${PWD}
 BINDIR=`dirname $0`
 LIBDIR=${BINDIR}/lib
 
-. ${LIBDIR}/lib-config.sh
-lib_init stage package
+. ${LIBDIR}/stage.sh
+. ${LIBDIR}/package.sh
 
 emitstatus()
 {

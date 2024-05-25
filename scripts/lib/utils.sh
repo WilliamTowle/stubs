@@ -10,6 +10,9 @@
 #*    - Redistributing? Include/offer to deliver original source      *
 #*   Philosophy/full details at http://www.gnu.org/copyleft/gpl.html  *
 
+
+[ "${HAVE_LIB_UTILS}" != 'y' ] || return
+
 ## utils_seq(): emit inclusive range from FRVAL to TOVAL
 ## (as per '/usr/bin/seq')
 
@@ -23,3 +26,5 @@ utils_seq()
 		FRVAL=`expr ${FRVAL} + 1`
 	done
 }
+
+HAVE_LIB_UTILS=y

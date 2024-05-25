@@ -9,13 +9,15 @@
 #*    - Redistributing? Include/offer to deliver original source      *
 #*   Philosophy/full details at http://www.gnu.org/copyleft/gpl.html  *
 
+
+[ "${HAVE_LIB_STUBS}" != 'y' ] || return
+
 STUBSLIB_CFG=config/stubs.cfg
 STUBSLIB_CFG_LOADED=n
 STUBSLIB_CFG_PREFIX=STUBS
 STUBSLIB_PROJCONF=`dirname ${STUBSLIB_CFG}`/project-conf
 
-. ${LIBDIR}/lib-config.sh
-lib_init env
+. ${LIBDIR}/envfile.sh
 
 stubs_envfile_load()
 {
@@ -105,3 +107,5 @@ stubs_configure_tctree()
 
 	echo "STUBS_TCTREE: ${STUBS_TCTREE:-UNSET}"
 }
+
+HAVE_LIB_STUBS=y
