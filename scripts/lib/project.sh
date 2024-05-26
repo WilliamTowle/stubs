@@ -61,10 +61,10 @@ proj_configure_stages()
 
 	if [ "$1" ] ; then
 		STAGES=$1
-		if ! env_validate_numeric ${STAGES} ; then
+		if utils_is_false env_validate_numeric ${STAGES} ; then
 			echo "proj_configure_stages(): STAGES '${STAGES}' non-numeric" 1>&2
 			exit 1
-		elif ! env_validate_numeric_limit ${STAGES} 9 ; then
+		elif utils_is_false env_validate_numeric_limit ${STAGES} 9 ; then
 			echo "proj_configure_stages(): STAGES '${STAGES}' too high" 1>&2
 			exit 1
 		else
@@ -88,11 +88,11 @@ proj_configure_stagetype()
 	elif [ -z "${STAGENUM}" ] ; then
 		echo "$0: Need STAGENUM in range 1..${PROJECT_STAGES}" 1>&2
 		exit 1
-	elif ! env_validate_numeric_limit ${STAGENUM} ${PROJECT_STAGES} ; then
+	elif utils_is_false env_validate_numeric_limit ${STAGENUM} ${PROJECT_STAGES} ; then
 		echo "$0: STAGENUM '${STAGENUM}' not in range 1..${PROJECT_STAGES}" 1>&2
 		exit 1
 	elif [ "${STAGETYPE}" ] ; then
-		if ! env_validate_numeric ${STAGENUM} ; then
+		if utils_is_false env_validate_numeric ${STAGENUM} ; then
 			echo "$0: STAGENUM '${STAGENUM}' non-numeric or missing" 1>&2
 			exit 1
 		else
@@ -117,10 +117,10 @@ proj_configure_stageconf()
 	if [ -z ${PROJECT_STAGES} ] ; then
 		echo "$0: PROJECT_STAGES unset" 1>&2
 		exit 1
-	elif ! env_validate_numeric ${STAGENUM} ; then
+	elif utils_is_false env_validate_numeric ${STAGENUM} ; then
 		echo "$0: STAGENUM '${STAGENUM}' non-numeric or missing" 1>&2
 		exit 1
-	elif ! env_validate_numeric_limit ${STAGENUM} ${PROJECT_STAGES} ; then
+	elif utils_is_false env_validate_numeric_limit ${STAGENUM} ${PROJECT_STAGES} ; then
 		echo "$0: STAGENUM '${STAGENUM}' not in range 1..${PROJECT_STAGES}" 1>&2
 		exit 1
 	elif [ "${STAGECONF}" ] ; then

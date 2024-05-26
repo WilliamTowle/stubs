@@ -19,7 +19,7 @@ stageconf_emit_all()
 {
 	proj_envfile_load
 
-	if ! env_validate_numeric ${PROJECT_STAGES} ; then
+	if utils_is_false env_validate_numeric ${PROJECT_STAGES} ; then
 		echo '$PROJECT_STAGES needs to be set' 1>&2
 		exit  1
 	else
@@ -34,10 +34,10 @@ stageconf_emit_stage()
 	STAGENUM=$1
 	proj_envfile_load
 
-	if ! env_validate_numeric ${PROJECT_STAGES} ; then
+	if utils_is_false env_validate_numeric ${PROJECT_STAGES} ; then
 		echo '$PROJECT_STAGES needs to be set' 1>&2
 		exit  1
-	elif ! env_validate_numeric_limit ${STAGENUM} ${PROJECT_STAGES} ; then
+	elif utils_is_false env_validate_numeric_limit ${STAGENUM} ${PROJECT_STAGES} ; then
 		echo "STAGENUM '${STAGENUM}' not in range 1..${PROJECT_STAGES}" 1>&2
 		exit  1
 	else

@@ -13,6 +13,16 @@
 
 [ "${HAVE_LIB_UTILS}" != 'y' ] || return
 
+## utils_is_false(): check for a false result on running the given
+## command
+## (as per POSIX '!')
+
+utils_is_false()
+{
+	[ `eval ${1+"$@"} 1>/dev/null ; echo $?` = 1 ]
+}
+
+
 ## utils_realpath(): show canonical directory name
 ## (as per '/usr/bin/realpath')
 
