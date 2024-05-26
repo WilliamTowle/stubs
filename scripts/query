@@ -10,7 +10,7 @@
 #*    - Redistributing? Include/offer to deliver original source      *
 #*   Philosophy/full details at http://www.gnu.org/copyleft/gpl.html  *
 
-TOPLEV=${PWD}
+TOPLEV=$(/bin/pwd)
 BINDIR=`dirname $0`
 LIBDIR=${BINDIR}/lib
 

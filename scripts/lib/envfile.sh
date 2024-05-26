@@ -13,6 +13,8 @@
 
 [ "${HAVE_LIB_ENVFILE}" != 'y' ] || return
 
+. ${LIBDIR}/utils.sh
+
 env_envfile_load()
 {
 	FILEPATH=$1
@@ -29,7 +31,7 @@ env_envfile_load()
 		## acquire TOPLEV
 		case ${BINDIR} in
 		/*)	TOPLEV=`dirname ${BINDIR}`	;;
-		*)	TOPLEV=`dirname ${PWD}/${BINDIR}` ;;
+		*)	TOPLEV=`utils_realpath ${BINDIR}/..` ;;
 		esac
 
 		FILEPATH=${TOPLEV}/${FILEPATH}
@@ -79,7 +81,7 @@ env_configure_directory()
 	VARNAME=$1
 	FILENAME=$2
 
-	eval "${VARNAME}="`basename ${FILENAME}`
+	eval "${VARNAME}=`basename ${FILENAME}`"
 	[ -d ${FILENAME} ]
 }
 

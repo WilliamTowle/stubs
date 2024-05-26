@@ -10,7 +10,7 @@
 #*    - Redistributing? Include/offer to deliver original source      *
 #*   Philosophy/full details at http://www.gnu.org/copyleft/gpl.html  *
 
-BINDIR=${PWD}/toolchain/usr/bin
+BINDIR=$(/bin/pwd)/toolchain/usr/bin
 NASM=${BINDIR}/nasm
 SYS_FREEDOS=${BINDIR}/sys-freedos.pl
 

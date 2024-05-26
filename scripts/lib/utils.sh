@@ -13,6 +13,15 @@
 
 [ "${HAVE_LIB_UTILS}" != 'y' ] || return
 
+## utils_realpath(): show canonical directory name
+## (as per '/usr/bin/realpath')
+
+utils_realpath()
+{
+	( cd ${1+"$@"} && /bin/pwd )
+}
+
+
 ## utils_seq(): emit inclusive range from FRVAL to TOVAL
 ## (as per '/usr/bin/seq')
 
