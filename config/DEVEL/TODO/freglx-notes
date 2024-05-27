@@ -1,0 +1,502 @@
+CONFIGURATIONS -- TODO/IMMEDIATE
+================================
+
+- See marked 'PATH=?'
+- See marked 'CFLAGS=?'
+- See marked 'FAKEROOT'
+- Check --host vs --build use - still errors
+- use of ^i386-uclibc-gcc (bad CC=${FR_CROSS_CC} still), eg. rdate 1.4
+- glib 1.2.10 is supposed to work (...adjust CC/--build/--host)
+- See where '-o root' and '-g root' are omitted; try 'fakeroot'
+- Consistent specification of 'install' executable
+- Consistent specification of ncurses/openssl{/other} locations?
+- lynx: see 'build' script in latest webgen
+- see 32MB stick for svgalib update, etc
+- virus: err() should not be used - it's not SUSv3-standard [...when uClibc=0.9.20]
+- startup files: `manpath` exe adds the standard bits; MANPATH should be empty or start with colon
+
+- willow lacks numerous important sources for build!!
+- missing 'sirclive' font (and 'kbd' package only v1.10)
+
+
+CONFIGURATIONS -- 2005
+======================
+
+- cpufreqd 2.x: wants libcpufreq from cpufrequtils
+- dcd: wants musicbrainz/mb_c.h
+- dcron 2.3.3 ... wants `mkdir /usr/bin` (OLD?)
+- dosfstools 2.10 hasn't built sanely yet
+- ethereal: --enable-static, --disable-shared, --disable-ethereal, --enable-randpkt, --with-ssl
+- ethereal: LIBS='-lz -lbind'
+
+- gdb: --disable-nls, --with-tui
+- gdb: perl -pi -le 's/^/#/ if /^LOADLIBES/' gdb/Makefile
+- grub 1.91: wants to test for "regparm=3 bug"
+
+- mikmod 3.1.6 ... off /work
+- minicom 2.1 ... "you don't exist". Test on Willow.
+
+- nmap: problem with string.h with or without -D_I386_STRING_H (08/09/2005)
+
+openssl (0.9.7d):
+- CC=i386-uclibc-linux-gcc perl ./config --prefix=/usr/i386-uclibc-linux
+- make CC=i386-uclibc-linux-gcc install INSTALL_PREFIX=/var/tmp
+- strip '$BPM_ROOT/usr/bin/openssl'
+
+openssh (3.8.1p1)
+- CC=i386-uclibc-linux-gcc ./configure --prefix=/usr/i386-uclibc-linux --without-tcp-wrappers --without-skey --without-pam --without-rand-helper --without-kerberos --without-xauth
+
+- pcre 6.4: build fails, re 'libtool: link...'
+- pkgconfig: CFLAGS=-Os, LDFLAGS=-s, --disable-shared
+- psmisc: fuser.c and killall.c need rpmatch()
+
+- shadow 4.0.12/4.0.13: gpasswd build failure - groupio.o putgrent()
+- shttpd UNKNOWN ... how to configure?
+
+- util-linux 2.13pre: blockdev and setlocale() definition?
+- wget 1.10.1/1.10.2: wants clock_get{res|time}
+
+CONFIGURATIONS -- 2005
+======================
+
+c/cabextract-1.1/package.cfg
+
+c/chntpw-source-030126/package.cfg
+- parse error in DES stuff (openssl?)
+
+c/confuse-2.4/package.cfg
+
+e/e2salvage-0.0.8a/package.cfg
+- "storage size of geob isn't known" (kernel version?)
+- "implicit declaration of open()"
+
+e/elhttp-0.21/package.cfg
+- parse error in define_child_exit macro :(
+
+e/etherboot-5.2.6/package.cfg
+- parse errors before 'size_t' :(
+
+e/ethereal-0.10.8/package.cfg
+- build fails - v0.10.6 requires GLib >= 2.0.0
+
+f/fasm-1.56/package.cfg
+
+f/findutils-4.2.3-alpha/package.cfg
+- parse error before 'init' in pred.c (4.2.3-alpha, dc and th)
+
+d/dietlibc-0.27/package.cfg
+- runtime complains of parse errors in 64-bit stuff
+
+d/dosfstools-2.10/package.cfg
+
+g/gawk-3.1.4/package.cfg
+
+g/gdb-6.2.1/package.cfg
+- (...5.x?) runtime requires libncurses.so.5 :(
+- v6.* configure refuses forced configuration for mbstate_t
+
+g/glib-2.6.0/package.cfg
+
+g/groff-1.19.1/package.cfg
+
+
+h/honeyd-0.8b/package.cfg
+- ./configure doesn't complete - needs 'dnet-config'
+
+h/hping3-alpha-2/package.cfg
+- complaint about "#ifndef with no argument" in byteorder.h
+
+h/htdig-3.2.0b6/package.cfg
+- wants to check for mutexes
+
+i/inetutils-1.4.2-shishi-20040113/package.cfg
+
+i/ipfwadm-2.3.0/package.cfg
+- SCM_RIGHTS redefined, other redefinitions, parse warning
+
+i/iptables-1.2.9/package.cfg
+- build fails (...due to lack of netfilter/IPv6 in kernel)
+
+l/libdnet-1.8/package.cfg
+- build failure - incomplete type
+
+l/libsigc++-1.0.4/package.cfg
+
+l/libyahoo-0.18.4/package.cfg
+
+l/libyahoo2-0.7.4/package.cfg
+
+l/listps-src/package.cfg
+
+l/lsof-4.71/package.cfg
+- confusion with ntohl()
+
+l/lsh-2.0/package.cfg
+- configure fails - requires gmp.h
+
+m/madplay-0.15.2b/package.cfg
+
+m/mcrypt-2.6.4/package.cfg
+
+m/misctools-2.1.1/package.cfg
+
+m/mp3blaster-3.2.0/package.cfg
+- complaint about ANSI C++
+
+n/nmap-3.70/package.cfg
+- mis-locates various libraries. check which!
+- fails for libpcap-possiblymodified - string.h parse error!?
+
+o/openssh-3.7.1p2/package.cfg
+- "cannot run test program while cross compiling", since it
+wants to "check compiler and flags for sanity" :(
+
+o/openssl-0.9.7e/package.cfg
+- problem ... uses wrong linker
+
+p/parted-1.6.20-24/package.cfg
+- wants libuuid (e2fsprogs? e2fsprogs-devel?)
+
+p/pcmcia-cs-3.2.7/package.cfg
+- Various compile errors, including gcc version (due to kernel)
+
+p/picogui-0.46/package.cfg
+
+p/pine-4.60/package.cfg
+- undefined references to 'crypt()' (CFLAGS=?)
+
+p/pkgconfig-0.15.0/package.cfg
+
+p/pmem-1.1/package.cfg
+
+p/popselect-0.31/package.cfg
+
+p/pth-2.0.1/package.cfg
+
+p/pwdutils-2.6.4/package.cfg
+
+r/rsync-2.6.2/package.cfg
+
+s/schedutils-1.3.5/package.cfg
+- lots of "redundant redeclaration"s ...in uClibc headers!!!
+
+s/screen-4.0.2/package.cfg
+- "configure: error: cannot run test program while cross
+ compiling" - while is seeking for strerror()?
+
+s/sipsak-0.8.11/package.cfg
+- parse error with variable declaration mid-function
+
+s/slrn-0.9.8.1/package.cfg
+
+s/sox-12.17.7/package.cfg
+
+s/strace-4.5.8/package.cfg
+- Cool!!! Get `linux/syscallent.h:351: #error fix me`
+
+s/syslinux-3.01/package.cfg
+
+t/tcsh-6.12.00/package.cfg
+- link fails - various undeclared entities
+
+t/tmsnc-0.1.3/package.cfg
+
+t/tnftpd-20040810/package.cfg
+- build failure re SO_SNDLOWAT
+
+t/ttywatch-0.14/package.cfg
+
+t/twinit-5/package.cfg
+
+v/vim-6.3/package.cfg
+- flatly refuses to cross-compile, asserts "check CC and CFLAGS"
+
+v/vlc-0.7.2/package.cfg
+
+y/yaboo-0.8/package.cfg
+- libyahoo2 confused by uClibc libraries
+
+y/Y-0.2/package.cfg
+
+z/ziproxy-1.3d/package.cfg
+
+e2recover 1.0: needs e2fsprogs-devel
+
+file-rename-utils 1.3.3: bad archive contents
+
+hdup-2.0.4:
+- wants glib, pkgconfig ... but toolchain-cross pkgconfig fails
+
+honeyd
+- needs dnet-config (libdnet)
+- libdnet doesn't cross compile - wants struct sockaddr_ll
+
+squash-1.0
+- needs fftw.h
+- needs curses.h
+- needs ao/ao.h
+- needs wordexp.h
+
+playmidi-2.5.tar.gz: source archive contains v2.4
+
+replace-2.24: REQUIRES glibc-devel
+
+sources/x/xmcd-3.3.2.tar.gz: URL won't munge to source file name
+
+findutils 4.1.20: source is missing
+
+gdb 6.3: source was corrupt
+
+playvideo 0.0.2: wants quicktime.h
+
+
+CONFIGURATIONS -- 2004
+======================
+
+2004/alien-8.46/package.cfg
+
+2004/daemontools-0.76/package.cfg
+- one build failure, and bails out of testing (getgroups())
+
+2004/dhcpd-0.8.29/package.cfg
+- suffers SCM_RIGHTS and "struct sockaddr" defintions/sizes
+
+2004/ethwireck-1.0/package.cfg
+- build fails on linux/ethtool.h (kernel version)
+
+2004/fileschanged-0.6.0/package.cfg
+- configure fail - needs "FAM development package"
+
+2004/hc-cron-0.14/package.cfg
+- WEXITSTATUS redefined, and other compile errors
+
+2004/memgrep-0.8.0/package.cfg
+- wants "elf.h", but is cross-compiling
+
+2004/microwindows-0.90/package.cfg
+
+2004/mp-0.5b/package.cfg
+- build fails - no 'libpanel' with toolchain ncurses
+
+2004/msysklogd-0.6/package.cfg
+- fails to find {fmt,scan}.h (libowfat?)
+
+2004/netpbm-10.19/package.cfg
+- link errors, '{pm,pbm}_*'
+
+2004/nfcount-0.3/package.cfg
+- confused about whether compiler works (natch, cross!) ... PATH=?
+
+2004/oftpd-0.3.7/package.cfg
+- build fails, no (apparent) pthread support ... CFLAGS=?
+
+2004/oms-0.1.2/package.cfg
+- "configure: error: Cannot find GLIB: Is glib-config in path?"
+
+2004/op-1.23/package.cfg
+
+2004/osh-0.2-pre7/package.cfg
+- wants readline/readline.h (but in path other than UCPATH) (CFLAGS=?)
+
+2004/over5-20021117/package.cfg
+
+2004/pam_pwdfile-0.99/package.cfg
+- requires a '../../Make.Rules'
+
+2004/pam_unix2-1.15/package.cfg
+- doesn't configure ("checking for security/pam_appl.h... no"
+ and "configure: error: broken libpam installation")
+
+2004/partimage-0.7.2/package.cfg
+- requires (but fails to find) libpthread (CFLAGS=?)
+
+2004/pcopy-1.5/package.cfg
+- requires some sort of thread library (#error in .c) (CFLAGS=?)
+
+2004/perl-dc-5.8.5/package.cfg
+
+2004/pkdump-3.1/package.cfg
+- suffers 'redefinition' and 'undefined' errors at compile time
+
+2004/playmidi-2.4/package.cfg
+- No AWE support in 2.0 kernel?
+
+2004/pport-0.6d/package.cfg
+
+2004/psad-1.2.4/package.cfg
+- asserts need to be root to perform install (FAKEROOT)
+
+2004/pump-0.7.3/package.cfg
+
+2004/quotatool-1.4.2/package.cfg
+- configure claims "Can't find quota defs"
+
+2004/recoverdm-0.15/package.cfg
+- dev.c init_device() errors - kernel version?
+
+2004/replace-2.21/package.cfg
+- build fails - doesn't locate ftw.h (req glibc-devel)
+
+2004/run-2.1/package.cfg
+- build fails - undefined references (poss. kernel version)
+
+2004/setcd-1.4-2/package.cfg
+- wants some ioctl() constants that aren't in the 2.0.x kernels
+
+2004/skill-4.1.1/package.cfg
+- build fails due to needing MAXCOMLEN and KERN_PROC defns
+
+2004/sysconf-1.0.0/package.cfg
+- HOST vs CROSS compiler confusion - with libtool to follow :(
+
+2004/thy-0.9.3/package.cfg
+- build failure - compat.c undefined reference to setproctitle
+
+2004/udhcp-0.9.8/package.cfg
+
+2004/unrar-3.3.4/package.cfg
+- build failure - struct "with uninitialised const members"
+
+2004/VCinit-1.2/package.cfg
+
+2004/X11R670/package.cfg
+- fails on AuDispose.c build - wants X11/Xauth.h (it's in lib/Xau)
+
+2004/XFree86-4.4.0/package.cfg
+- Unpathed assyntax.h in "normal" make (...?!!)
+- ...Puppy 0.8.x build has LinuxLocaleDefines set to '-DX_LOCALE'
+
+2004/xmcd-3.2.1/package.cfg
+- Wants sys/scsi.h via cda.c (...is this kernel-dependent??)
+- Next missing sys/scsi.h (also kernel-dependent??)
+- Also missing various X libraries
+
+
+CONFIGURATIONS -- 2003
+======================
+
+2003/rpm-4.0.4/package.cfg
+- 'build' fails to link in beecrypt, using '-o .libs/' :(
+
+2003/rpm-4.0.5/package.cfg
+- bad sed substitutions?
+
+2003/rpm-4.1/package.cfg
+- Requires Python.h
+- Has its build.mak still (keep until above fixed)!
+
+
+COREQUISITES
+============
+
+runtime-bash:
+- atsar-linux (1.7)
+- groff (1.19.1)
+
+
+TALK
+====
+
+| * /opt/freglx/bin/egpfudge.sh:
+| - Doesn't handle multiple files
+| 
+| * egp and installation:
+| - List of installed packages
+| 	- enable basic conflict resolution
+| 	- note "uClibc" having "0.9.20 RUNTIME" vs "0.9.20 WRAPPERS"
+| 	- create list under /opt/freglx/var/egp/
+| - List of installed files (and sourcing packages)
+| 	- enable package removal
+| 
+| * inittab:
+|      ::sysinit:/etc/init.d/rcS
+|      tty1::askfirst:/bin/login
+|      tty2::askfirst:/bin/login
+|      tty3::askfirst:/bin/login
+|      tty4::askfirst:/bin/login
+|      ::respawn:/sbin/getty -L ttyS0 9600
+|      ::respawn:/sbin/getty -L ttyS1 9600
+|      ::ctrlaltdel:/sbin/swapoff -a
+|      ::ctrlaltdel:/sbin/umount -a
+| 
+| * rcS:
+| 	#!/bin/sh
+| 	
+| 	PATH=/sbin:/bin:/usr/bin:/usr/sbin:
+| 	export $PATH
+| 	
+| 	# Mount filesystems in /etc/fstab.
+| 	/bin/mount -a -v
+| 	
+| 	#Start inet services
+| 	/usr/bin/inetd
+| 	/sbin/arp
+| 	
+| 	# Set host name
+| 	/bin/hostname localhost.localdomain
+| 	
+| 	#Config localhost
+| 	/sbin/ifconfig lo 127.0.0.1
+| 	
+| 	# Add route to localhost
+| 	/sbin/route add -net 127.0.0.0 netmask 255.0.0.0 metric 1 lo
+| 	
+| 	# Display machine type and kernel
+| 	/bin/uname -a
+| 	
+| 	# Start system log
+| 	echo "Starting System Log"
+| 	/sbin/syslogd
+| 	 
+| 	# Display /etc/issue file.
+| 	/usr/bin/clear
+| 	/bin/sh /etc/issue
+| 	
+| 
+| TALK
+| 	dietlibc as alternative:
+| 	- fully static linking
+| 	- uClibc more compatible (better application support)
+| 	newlibc? klibc?
+| 
+| REFERENCE http://www-106.ibm.com/developerworks/linux/library/l-lwl1/?t=gr,lnxw12=LLP1
+| 	- kernel config + reasons
+| 
+| uClibc
+| 	- version now at v0.9.16+/snapshot-20021111
+| 	- busybox has a DOLFS in Makefile - which should match (uC)libc
+| 
+| "a complete linux system runs quite nicely in 500K of memory on
+| an Intel 386 microprocessor with an 8-bit bus (SX)"
+| [http://www-106.ibm.com/developerworks/linux/library/l-embl.html]
+
+
+TOOLCHAINS
+==========
+
+- gcc: - gcc 3.4.x c++ abi incompatibility: specify old ABI with -fabi=102
+- gcc: versions need '--enable-sjlj-exceptions' for C++ exception handling to work (uClibc 0.9.26/27)
+
+
+WILLOW -- MISC
+==============
+
+- busybox (1pre5?) has examples/undeb (needs ar, tar, gzip, more/less)
+- busybox (1pre5?) has examples/unrpm (needs cpio, gzip, more/less)
+- "ile" for command line history (cf Freesco?)
+- examine tcc0.9.20 configure for function checks... otherwise uClibc needs:
+	UCLIBC_HAS_MMU?
+	UCLIBC_HAS_FLOATS?
+	HAS_FPU?
+	UCLIBC_HAS_SOFT_FLOAT?
+	DO_C99_MATH?
+	ADD_LIBGCC_FUNCTIONS?
+- uClibc notes CFLAGS+=-D__FORCE_NOGLIBC
+- uClibc also notes that "*GENERIC_*386" needs the compiler to optimize
+	correctly; "386 kernels will only run on a 386 class machine" however
+
+BUILD
+-----
+
+- uClibc fails due to ncurses.h requirement (which itself needs stdbool.h)
+- [target-]binutils fails; given host/build, "cannot determine C library minor version number"

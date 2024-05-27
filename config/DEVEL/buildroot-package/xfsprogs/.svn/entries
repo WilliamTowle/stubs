@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="13903"
+   name=""
+   committed-date="2006-02-10T20:31:04.809914Z"
+   url="svn://uclibc.org/trunk/buildroot/package/xfsprogs"
+   last-author="prpplague"
+   kind="dir"
+   uuid="69ca8d6d-28ef-0310-b511-8ec308f3f277"
+   revision="14469"/>
+<entry
+   committed-rev="13903"
+   name="xfsprogs.mk"
+   text-time="2006-03-08T08:15:21.000000Z"
+   committed-date="2006-02-10T20:31:04.809914Z"
+   checksum="03c5738ce20be7ddb77df813e91ce10f"
+   last-author="prpplague"
+   kind="file"
+   prop-time="2006-03-08T08:15:21.000000Z"/>
+<entry
+   committed-rev="11709"
+   name="xfsprogs.patch"
+   text-time="2006-03-08T08:15:21.000000Z"
+   committed-date="2005-09-30T20:41:41.853410Z"
+   checksum="11a28b275978b56d4bed28fafce837f5"
+   last-author="andersen"
+   kind="file"
+   prop-time="2006-03-08T08:15:21.000000Z"/>
+<entry
+   committed-rev="11709"
+   name="Config.in"
+   text-time="2006-03-08T08:15:21.000000Z"
+   committed-date="2005-09-30T20:41:41.853410Z"
+   checksum="c5a12245e67263e486c943ea2479a634"
+   last-author="andersen"
+   kind="file"
+   prop-time="2006-03-08T08:15:21.000000Z"/>
+</wc-entries>

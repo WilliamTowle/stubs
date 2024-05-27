@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="12505"
+   name=""
+   committed-date="2005-11-24T06:53:24.978525Z"
+   url="svn://uclibc.org/trunk/buildroot/package/microwin"
+   last-author="vapier"
+   kind="dir"
+   uuid="69ca8d6d-28ef-0310-b511-8ec308f3f277"
+   revision="14469"/>
+<entry
+   committed-rev="9617"
+   name="Config.in"
+   text-time="2006-03-08T08:15:25.000000Z"
+   committed-date="2004-12-26T07:36:59.000000Z"
+   checksum="cf9fb31a6afe223d607bc25cab625fc2"
+   last-author="vapier"
+   kind="file"
+   prop-time="2006-03-08T08:15:25.000000Z"/>
+<entry
+   committed-rev="12505"
+   name="microwin.mk"
+   text-time="2006-03-08T08:15:25.000000Z"
+   committed-date="2005-11-24T06:53:24.978525Z"
+   checksum="3fcae88f2dd8852caf933a0b17e1e5da"
+   last-author="vapier"
+   kind="file"
+   prop-time="2006-03-08T08:15:25.000000Z"/>
+</wc-entries>
