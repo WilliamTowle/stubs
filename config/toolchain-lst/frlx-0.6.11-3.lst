@@ -1,0 +1,69 @@
+## "Franki" extension-set
+## Since 2007-12-02 (frlx-0.6.11-2, auth WmT)
+#	gettext -> 0.14.6-fr1b
+#	+ gettext-intl -> 0.17
+## Last Modified 2007-12-02
+
+# ------------------------------------------
+# PACKAGE		# VERSION	# HOST/CROSS
+
+m4			1.4.8		HOST
+autoconf		2.61		HOST
+gettext			0.14.6-fr1b	HOST
+#flex			2.5.31		HOST
+flex			2.5.27-fr1b	HOST
+which			2.16-fr1b	HOST
+
+bison			1.875e-fr1b	HOST
+#bison			2.3		HOST
+#bin86			0.16.0-eg1c	HOST
+bin86			0.16.17-eg1c	HOST
+unzip			5.52-fr1a	HOST
+#groff			1.19		HOST
+groff			1.19.1-eg1d	HOST
+util-linux		2.12r-fr1c	HOST
+
+gettext-intl		0.17		CROSS
+e2fsprogs		1.40.2		CROSS
+#ncurses			5.5-gent1
+ncurses			5.6		CROSS
+popt			1.7-eg1c	CROSS
+libelf			0.8.10		CROSS
+zlib			1.2.3-eg1b	CROSS
+
+# --------------------------------------------------
+# PACKAGE		# VERSION	# HOST/CROSS
+
+automake		1.10		CROSS
+
+bsd-errh		1		CROSS
+
+ed			0.8		HOST
+
+dpy			3.1-eg1c	CROSS
+
+fakeroot		1.5.10ubuntu2	HOST
+file			4.12-fr1c	HOST
+freetype		2.3.5		CROSS
+
+libbz2			1.0.2-eg1b	CROSS
+libconfig		0.1.16-eg1b	CROSS
+libevent		1.3e		CROSS
+libgpm			1.20.1-eg2c	CROSS
+libid3tag		0.15.1b-eg2c	CROSS
+libmad			0.15.1b-eg2c	CROSS
+libmikmod		3.1.10-eg2c	CROSS
+libogg			1.1.3-eg1b	CROSS
+libpcap			0.8.3-eg1d	CROSS
+readline		5.2		CROSS
+libvorbis		1.1.2-eg1b	CROSS
+
+openssl			0.9.7m		CROSS
+
+pcre			4.5-eg1d	CROSS
+
+#SDL			1.2.6-2		CROSS
+#SDL			1.2.7		CROSS
+#slang			1.4.9-3		CROSS
+#smallvga		1.0-2		CROSS
+#smpeg			0.4.4		CROSS

@@ -1,0 +1,25 @@
+## "Earl Grey"
+## Since 2007-12-02 (freg-0.6.11-2, auth WmT)
+## Last modified 2007-12-02
+
+## ----------------------------------------------
+## PACKAGE		# VERSION	# PREFIX?
+
+busybox			0.60.5-5g
+#!busybox			0.60.5-fr1a
+#!busybox			1.01
+bzip2	 		1.0.4		MINIMAL
+dosfstools		2.9-fr1a
+#dosfstools		2.11
+eg-init			0.6.5
+eg-progs		0.6.5
+gzip			1.2.4b-fr1b	MINIMAL
+ld.so			1.9.11-fr1a
+sed			4.1.5
+#minised		1.12
+tar			1.13-fr1a		MINIMAL
+#tar			1.19		MINIMAL
+uClibc			0.9.20-2g	RUNTIME
+#sanitc-uClibc		0.9.20--mk2
+umsdos_progs		1.32-fr1a
+util-linux		2.12r-fr1c	MINIMAL

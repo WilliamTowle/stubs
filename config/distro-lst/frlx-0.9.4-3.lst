@@ -1,0 +1,304 @@
+## "Franki" extension-set
+## Since 2007-12-02 (frlx-0.9.4-2, auth WmT)
+#	arpalert -> 2.0.9
+#	gettext -> 0.14.6-fr1b
+#	libiconv -> 1.12, 1.11.1
+#	libpng -> 1.2.23
+#	lynx -> 2.8.6rel.5
+#	man -> 1.6f
+#	ms-sys -> 2.1.3
+#	nasm -> 2.00
+#	+ snake.asm UNKNOWN
+#	sysstat -> 8.0.3
+#	termcap -> 1.3.1-fr1c
+#	unfs -> 0.9.19
+#	vitetris -> 0.3.4
+#	vttest -> 20071216
+## Last modified 2008-01-06
+
+## ------------------------------------------------
+## PACKAGE		# VERSION	# PREFIXES
+
+acpi			0.09-eg1b
+amigadepacker		0.02
+antiword		0.37-gentoo-0.1
+apccomm			2.2.0-eg1c
+arj			3.10.22-eg1b
+arpalert		2.0.9
+ascii			3.8-eg1b
+ash-linux		0.2-eg2c
+autoconf		2.61a
+automake		1.10
+autossh			1.4a
+awhttpd			3.0.7
+
+balance			3.35
+banner			1.3.1-eg1c
+beeper			1.2-eg1c
+bin86			0.16.17-eg1c
+#binutils		2.16.1
+#sanitc-host-binutils, sanitc-cross-binutils?
+bios-cmos		1.0-eg2b
+#bison			1.875e-fr1a
+bison			2.3
+bzip2 			1.0.4		UTILS
+
+cabextract		1.2
+catdoc			0.94.2
+ccrypt			1.7-eg2d
+#cd-console		2.4-2b
+cda			0.5-eg2b
+cdtool			2.1.8
+cheetah			1.8-eg1b
+chrpath			0.13-eg1c
+cmdftp			0.9.7
+cmospwd			4.3-eg2b
+conflict		20040327-eg1c
+coretrace		0.80-eg1b
+coreutils		5.97
+cpufreqd		1.2.3-eg1b
+cpuid			3.3
+curl			7.17.1
+
+dd_rescue		1.10-eg1c
+di			3.11-eg1c
+#dietlibc		0.24
+#diffutils		2.8.1-eg2f
+diffutils		2.8.1-fr1b
+diskimg			1.1.1-eg2b
+disktype		9
+distcc			2.18.3-eg1c
+djbdns			1.05-eg2c
+dmidecode		2.8
+#dmidecode		2.9
+dnsmasq			2.27
+dnstracer		1.8-eg1b
+dropbear		0.49
+#dyndnsupdate		0.8
+
+#e2fsimage		0.2.0-1b
+e2fsprogs		1.40.2
+#e2tools			0.0.16-1b
+#e2undel			0.82-1b
+e3			2.7.1
+ed			0.8
+ed			0.8rc1
+eject			2.1.0-eg1b
+elinks			0.10.6-eg1b
+#embutils		0.16
+etherdump		2.01-eg1c
+
+#fatundel		0.1
+fdutils			5.5-eg1b
+ffingerd		1.28-eg1b
+fftw			3.1.2
+file			4.12-fr1c
+findfile		0.2-eg1b
+findutils		4.2.29
+#fget			0.4.1
+#flex			2.5.27-fr1b
+flex			2.5.33
+fnord			1.10-eg1b
+for-each-file		1.7.3
+ff-bash			2.1
+freefile		1.8-eg2b
+freetype		2.3.5
+frox			0.7.18-eg1b
+ftpproxy		1.2.3-eg1b
+furl			2.1-eg1c
+#fwall			1.4.6rc5
+#fwall			1.4.6_rc7
+
+gawk			3.1.6
+gettext			0.14.6-fr1b
+#gpart			0.1h-2
+gpm			1.20.1-eg2c
+gpp			2.24-eg1b
+grep			2.5.1a-fr1c
+groff			1.19.1-eg1d
+grub			0.97-eg1b
+gzip			1.3.5		UTILS
+
+hafiye			1.0-eg1b
+hd2u			1.0.2
+hdimage			2.0.2
+hdparm			6.9
+hdup			1.6.37-eg1b
+hsftp			1.15-eg1b
+htpdate			0.8.8-eg1b
+
+im-httpd		0.05-eg2b
+inetrd			0.0.3
+ipchains		1.3.10-eg2c
+isapnptools		1.26-eg2c
+
+kbd			1.12-fr1a
+#ksmp3play		0.5.1
+
+lcc			4.2-eg1c
+lft			2.5-eg1b
+lget			1.5-eg1c
+lha			1.14i-ac20050924p1
+libelf			0.8.10
+libgpm			1.20.1-eg2c
+libiconv		1.11.1
+libid3tag		0.15.1b-eg2c
+libmad			0.15.1b-eg2c
+libogg			1.1.3-eg1b
+libvorbis		1.1.2-eg1b
+libpcap			0.9.7
+libpng			1.2.23
+#libpng			1.2.6beta2
+libtool			1.5.22
+lilo			22.8
+#linetd			1.3-eg2b
+linux_logo		4.14-fr1a
+linux_logo		5.0
+#linux2.0includes	2.0.40
+linux2.0source		2.0.40-2c
+linuxsms		0.77-eg1b
+lphdisk			0.9.1-eg2d
+lpr-bash		0.9a
+lutz			0.4b-eg2b
+
+m4			1.4.8
+madplay			0.15.2b-eg1c
+#magicrescue		1.1.3
+mailx			12.3
+make			3.81
+makebootfat		1.4-eg1b
+man			1.6f
+mawk			1.3.3-fr1a
+md5sha1sum		0.9.4
+memfetch		0.05b-eg2b
+memtee			0.1-eg1b
+memtest86		3.3
+#memtest86+		1.65
+memtester		4.0.6
+#microcom		102
+minicrc			0.2.2-eg1b
+minised			1.12
+#mmidentd		1.0
+modutils		2.4.27-eg1b
+mpg123			0.65
+ms-sys			2.1.3
+mtf			0.2.1-eg1b
+mtools			3.9.9-eg2c
+muhttpd			1.0.7
+myrescue		0.9.2-eg1b
+
+nasm			0.98.39
+nasm			2.00
+nc			2.0-alpha4-eg1b
+nc6			1.0
+netcat			1.10-eg3b
+netkit-combo		0.17-eg2b
+nsd			2.3.5
+nylon			1.2
+
+openssl			0.9.7m
+
+#parted			1.6.25.1
+parted			1.7.1
+patch			2.5.4-fr1b
+patchutils		0.2.30-eg1c
+pciutils		2.2.3
+pdc			0.9-eg2a
+pen			0.17.2
+picocom			1.4
+#picoSQL			2.0.2
+pkgconfig		0.15.0-eg2c
+pop3spam		0.9-eg1c
+poweracpid		0.2-eg1b
+
+#ratpoison		1.3.0-1b
+#rdate			1.4-eg1b
+renattach		1.2.4
+rlpr			2.06-eg1b
+rname			1.0
+rsyslog			1.0.4
+rsyslog			1.16.0
+rt-utils		1.1.6-eg1b
+rzip			2.1
+
+#SDL			1.2.6-2
+#SDL			1.2.7
+sara			5.4.0-eg1b
+sash			3.7-eg1b
+scsiadd			1.95-eg1b
+schedtool		1.2.9
+sed			4.1.5
+setmixer		27DEC94.orig-eg2b
+sft			0.4.14-eg1b
+#sh-utils		2.0-2b
+sh-utils		2.0.15-eg1b
+shush			1.1
+simplec			UNKNOWN-eg1b
+sioux			0.2.7-eg1b
+#sipsak			0.8.13
+sipsak			0.9.6-1
+#slang			1.4.9-3
+#slrn			0.9.7.4-2
+#smallvga		1.0-2
+#smallvga-pong		1.0-2
+smartsuite		2.1-eg2b
+#smartmontools		5.32
+smartmontools		5.33-eg1b
+#smpeg			0.4.4
+snake.asm		UNKNOWN
+sox			13.0.0
+statifier		1.6.8
+syslinux		2.13-fr1a
+#syslinux		3.35
+#sysmonlog		1.0.0
+sysfence		0.16
+sysstat			8.0.3
+
+tar			1.13-fr1a		UTILS
+#tar			1.19
+#X:tcc			0.9.20-2
+tcpdump			3.8.3-fr1a
+tcpick			0.2.1-eg1b
+termcap			1.3.1-fr1c
+#tetris.sh		0.0.3
+textutils		2.1-eg2c
+tftp-hpa		0.48
+thttpd			2.25b-fr1a
+tinylogin		1.4-fr1c
+#tinyproxy		1.6.3-eg1b
+tinyproxy		1.6.3-fr1c
+tscat			1.0
+tsh			0.6-eg2b
+ttyload			0.4.4-eg1b
+#ttyrec			1.0.6-eg1b
+#tzip			1.73
+
+uberkey			1.2-eg2b
+#uClibc			0.9.20-eg2h	WRAPPERS
+uClibc			0.9.20-eg2i	WRAPPERS
+unarj			2.43-eg1b
+#uncc			0.1.2.1
+unfs			0.9.19
+unix2tcp		0.8.2-eg1b
+#unrtf			0.19.3
+unzip			5.52-fr1a
+uptimec			0.2p4-eg1b
+uptimed			0.3.9
+util-linux		2.12r-fr1c	REMAINDER
+
+vitetris		0.3.4
+virus			0.0.6-fr1c
+vttest			20071216
+
+wget			1.9.1-eg2b
+which			2.16-fr1b
+wildmidi		0.2.2-eg1b
+wput			pre0.6
+
+x86info			1.12b-eg2b
+xinetd			2.3.13-eg1b
+
+zeppoo			0.0.4
+zip			2.32
+zlib			1.2.3-eg1b
+zsync			0.5
