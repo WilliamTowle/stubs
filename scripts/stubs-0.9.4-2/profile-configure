@@ -1,0 +1,343 @@
+#!/bin/sh
+##	configure	(c)1999-2006 William Towle
+##	Last modified	05/11/2005, WmT
+#
+#   Open Source software - copyright and GPLv2 apply. Briefly:
+#	- No warranty/guarantee of fitness, use is at own risk
+#	- No restrictions on strictly-private use/copying/modification
+#	- No re-licensing this work under more restrictive terms
+#	- Redistributing? Include/offer to deliver original source
+#   Philosophy/full details at http://www.gnu.org/copyleft/gpl.html
+
+##
+##	global config
+##
+
+CFGTREE=`pwd`/config
+CFGFILE=${CFGTREE}/stubs.cfg
+
+load_config()
+{
+	FILE=$1
+
+	if [ "${NEEDS}" != '' ] ; then
+		MISSING=n
+		for NEED in ${NEEDS} ; do
+			LINE=`grep "^${NEED}=." ${FILE}`
+			if [ "${LINE}" = '' ] ; then
+				echo "$0: ...no ${NEED} configured"
+				MISSING=y
+			fi
+			[ ${MISSING} = 'n' ]
+		done || MISSING=y
+		[ ${MISSING} = 'y' ] &&  exit 1
+	fi
+
+	if [ -r ${FILE} ] ; then
+		. ${FILE}
+	fi
+}
+
+save_config()
+{
+# TARGET_CPU is fixed
+	FILE=$1
+	cat > ${FILE} <<EOF
+TOPLEV=${TOPLEV}
+SCRIPTDIR=${SCRIPTDIR}
+SOURCETREE=${SOURCETREE}
+BUILDROOT=${BUILDROOT}
+TCTREE=${TCTREE}
+
+TARGET_CPU=i386
+PATHTC=${PATHTC}
+INITRD_SIZE=1536
+INITRD_FS=minix
+
+LOC_TOOLCHAINS=${LOC_TOOLCHAINS}
+USE_TOOLCHAIN=${USE_TOOLCHAIN}
+LOC_DISTROS=${LOC_DISTROS}
+USE_DISTRO=${USE_DISTRO}
+LOC_KERNELS=${LOC_KERNELS}
+USE_KERNEL=${USE_KERNEL}
+EOF
+}
+
+##
+##	subroutines
+##
+
+set_sourcetree()
+{
+	[ -z "${SOURCETREE}" ] && SOURCETREE=`pwd`/sources
+	STATUS=query
+	while [ ${STATUS} = query ] ; do
+		echo ;  echo -n "SOURCETREE? (${SOURCETREE}): " ; read ANSWER
+		[ "${ANSWER}" ] || ANSWER=${SOURCETREE}
+		if [ -d ${SOURCETREE} ] ; then
+			STATUS=done
+		else
+			echo -n "Does not exist. Accept and create? " ; read CONFIRM
+			[ "${CONFIRM}" = 'y' ] && STATUS=make
+			[ "${CONFIRM}" = 'Y' ] && STATUS=make
+		fi
+	done
+	SOURCETREE=${ANSWER}
+	[ ${STATUS} = make ] && mkdir -p ${SOURCETREE}
+}
+
+set_buildtree()
+{
+	[ -z "${BUILDROOT}" ] && BUILDROOT=`pwd`/build
+	STATUS=query
+	while [ ${STATUS} = query ] ; do
+		echo ;  echo -n "BUILDROOT? (${BUILDROOT}): " ; read ANSWER
+		[ "${ANSWER}" ] || ANSWER=${BUILDROOT}
+		if [ -d ${BUILDROOT} ] ; then
+			STATUS=done
+		else
+			echo -n "Does not exist. Accept and create? " ; read CONFIRM
+			[ "${CONFIRM}" = 'y' ] && STATUS=make
+			[ "${CONFIRM}" = 'Y' ] && STATUS=make
+		fi
+	done
+	BUILDROOT=${ANSWER}
+	[ ${STATUS} = make ] && mkdir -p ${BUILDROOT}
+}
+
+set_tctree()
+{
+	[ -z "${TCTREE}" ] && TCTREE=`pwd`/toolchain
+	STATUS=query
+	while [ ${STATUS} = query ] ; do
+		echo ;  echo -n "TCTREE? (${TCTREE}): " ; read ANSWER
+		[ "${ANSWER}" ] || ANSWER=${TCTREE}
+		if [ -d ${TCTREE} ] ; then
+			STATUS=done
+		else
+			echo -n "Does not exist. Accept and create? " ; read CONFIRM
+			[ "${CONFIRM}" = 'y' ] && STATUS=make
+			[ "${CONFIRM}" = 'Y' ] && STATUS=make
+		fi
+	done
+	TCTREE=${ANSWER}
+	[ ${STATUS} = make ] && mkdir -p ${TCTREE}
+}
+
+set_pathtc()
+{
+	[ -z "${PATHTC}" ] && PATHTC=y
+	STATUS=query
+	while [ ${STATUS} = query ] ; do
+		echo ;  echo -n "PATHTC? (y/n - ${PATHTC}): " ; read ANSWER
+		[ "${ANSWER}" ] || ANSWER=${PATHTC}
+		[ "${ANSWER}" = 'y' ] && STATUS=ok
+		[ "${ANSWER}" = 'n' ] && STATUS=ok
+	done
+	PATCHTC=${ANSWER}
+}
+
+layout_menu()
+{
+	LOOP=y
+	while [ "${LOOP}" = 'y' ] ; do
+		echo "s) Set SOURCETREE (${SOURCETREE})"
+		echo "b) Set BUILDROOT (${BUILDROOT})"
+		echo "t) Set toolchain tree (${TCTREE})"
+		echo "p) Include toolchain [P]aths (${PATHTC})"
+		echo "e) Exit"
+		echo "" ; echo -n "? " ; read ANSWER
+		case ${ANSWER} in
+		s|S)	set_sourcetree ; echo ;;
+		b|B)	set_buildtree ; echo ;;
+		t|T)	set_tctree ; echo ;;
+		p|P)	set_pathtc ; echo ;;
+		e|E)	LOOP=n ;;
+		esac
+	done
+}
+
+toolchain_menu()
+{
+	[ -z "${LOC_TOOLCHAINS}" ] && LOC_TOOLCHAINS=${CFGTREE}/toolchain
+	OK=n
+	while [ ${OK} = 'n' ] ; do
+		echo ; echo "Toolchain options:"
+		ls -1 ${LOC_TOOLCHAINS}/*.lst \
+			| sed 's%^.*/%	- %' | sed 's/.lst//'
+
+		echo ; echo -n "...choice? (${USE_TOOLCHAIN}): " ; read ANSWER
+		[ "${ANSWER}" ] || ANSWER=${USE_TOOLCHAIN}
+		[ -r ${LOC_TOOLCHAINS}/${ANSWER}.lst ] && OK=y
+	done
+	USE_TOOLCHAIN=${ANSWER}
+}
+
+distro_menu()
+{
+	[ -z "${LOC_DISTROS}" ] && LOC_DISTROS=${CFGTREE}/distro
+	OK=n
+	while [ ${OK} = 'n' ] ; do
+		echo ; echo "Distro options:"
+		ls -1 ${LOC_DISTROS}/*.lst \
+			| sed 's%^.*/%	- %' | sed 's/.lst//'
+
+		echo ; echo -n "...choice? (${USE_DISTRO}): " ; read ANSWER
+		[ "${ANSWER}" ] || ANSWER=${USE_DISTRO}
+		[ -r ${LOC_DISTROS}/${ANSWER}.lst ] && OK=y
+	done
+	USE_DISTRO=${ANSWER}
+}
+
+#do_rdsize_select()
+#{
+#	PREVVAL=${INITRD_SIZE}
+#	CHOICE=''
+#	while [ -z "${CHOICE}" ] ; do
+#		show_banner "INITRD SIZE"
+#
+#		echo ; echo -n "Choice - kilobytes? [${PREVVAL}] " ; read CHOICE
+#		[ -z "${CHOICE}" ] && CHOICE=${PREVVAL}
+#		[ `echo ${CHOICE} | sed 's/^[0-9]//'` != ${CHOICE} ] || CHOICE=''
+#	done
+#	INITRD_SIZE=${CHOICE}
+#}
+#
+#do_rdfs_select()
+#{
+#	PREVVAL=${INITRD_FS}
+#	CHOICE=''
+#	while [ -z "${CHOICE}" ] ; do
+#		show_banner "INITRD FILESYTEM"
+#
+#		echo ; echo -n "Choice? [${PREVVAL}] " ; read CHOICE
+#		[ -z "${CHOICE}" ] && CHOICE=${PREVVAL}
+#	done
+#	INITRD_FS=${CHOICE}
+#}
+
+kernel_menu()
+{
+	STATUS=query
+	LOC_KERNELS=${TCTREE}/etc/${USE_DISTRO}
+	if [ ! "`ls ${LOC_KERNELS}/vmlinu* 2>/dev/null`" ] ; then
+		if [ "`ls ${TCTREE}/etc/${USE_TOOLCHAIN}/vmlinu* 2>/dev/null`" ] ; then
+			LOC_KERNELS=${TCTREE}/etc/${USE_TOOLCHAIN}
+		elif [ -d ${TOPLEV}/package/${USE_DISTRO}/kernels ] ; then
+			# check for specific kernels (poss symlink)
+			LOC_KERNELS=${TOPLEV}/package/${USE_DISTRO}/kernels
+		else
+			LOC_KERNELS=${TOPLEV}/package/KERNELS
+		fi
+	fi
+
+	while [ ${STATUS} = 'query' ] ; do
+		echo ; echo "Kernel options:"
+		( cd ${LOC_KERNELS} 2>/dev/null && ls *linuz* 2>/dev/null) > tmp.$$
+
+		if [ ! -s tmp.$$ ] ; then
+			echo "Failed - no kernels found"
+			STATUS=failed
+		else
+			cat tmp.$$ | sed 's/^/	- /'
+			rm tmp.$$
+			echo ; echo -n "...choice? (${USE_KERNEL}): " ; read ANSWER
+			[ "${ANSWER}" ] || ANSWER=${USE_KERNEL}
+			[ -r ${LOC_KERNELS}/${ANSWER} ] && STATUS=done
+		fi
+	done
+	[ "${STATUS}" = done ] && USE_KERNEL=${ANSWER}
+}
+
+#do_kerneletc_menu()
+#{
+#	CHOICE=''
+#	while [ -z "${CHOICE}" ] ; do
+#		show_menu "INSTALLATION SELECTION" \
+#			"s) Initrd (S)ize (${INITRD_SIZE})" \
+#			"f) Initrd (F)S (${INITRD_FS})" \
+#			"k) Kernel (${USE_KERNEL})" \
+#			"e) Exit"
+#
+#		echo ; echo -n "Choice? " ; read CHOICE
+#		case ${CHOICE} in
+#		s|S)	do_rdsize_select ; CHOICE='' ;;
+#		f|F)	do_rdfs_select ; CHOICE='' ;;
+#		k|K)	do_kernel_select ; CHOICE='' ;;
+#		e|E)	;;	# loop quits if CHOICE unblanked
+#		*)	CHOICE='' ;;
+#		esac
+#	done
+#}
+
+do_warning()
+{
+	WARNED='n'
+	if [ ! -d ${LOC_KERNELS} ] ; then
+		echo "$0: WARNING: LOC_KERNELS ${LOC_KERNELS} does not exist" 1>&2
+		WARNED='y'
+	fi
+	[ ${WARNED} != 'n' ] && exit 1
+}
+
+do_configure()
+{
+	NEEDS='' load_config ${CFGFILE}
+	if [ "${TOPLEV}" != `pwd` ] ; then
+		OLDTOP=${TOPLEV}
+		TOPLEV=`pwd`
+
+		sed "s%=${OLDTOP}$%=${TOPLEV}%" ${CFGFILE} > ./tmp.$$
+		. ./tmp.$$
+		rm ./tmp.$$
+	fi
+	SCRIPTDIR=`dirname $0`
+
+	LOOP=y
+	while [ "${LOOP}" = 'y' ] ; do
+		echo "l) Set layout/preferences"
+		echo "t) Set toolchain (${USE_TOOLCHAIN})"
+		echo "d) Set distro (${USE_DISTRO})"
+		echo "k) Set distro kernel (${USE_KERNEL})"
+		echo "q) quit"
+		echo "" ; echo -n "? " ; read ANSWER
+		case ${ANSWER} in
+		l|L)	layout_menu ; LOOP=y ; echo ;;
+		t|T)	toolchain_menu ; LOOP=y ; echo ;;
+		d|D)	distro_menu ; LOOP=y ; echo ;;
+		k|K)	kernel_menu ; LOOP=y ; echo ;;
+		q|Q)	LOOP=n ;;
+		esac
+	done
+
+	save_config ${CFGFILE}
+	do_warning
+	echo "$0: CONFIGURE phase OK"
+}
+
+do_show_settings()
+{
+	NEEDS='' load_config ${CFGFILE}
+	echo "Toolchain: ${USE_TOOLCHAIN-none}"
+	echo "Distro: ${USE_DISTRO-none}"
+	do_warning
+}
+
+ACTION=$1
+[ "$1" ] && shift
+case ${ACTION} in
+show)	## display settings
+	do_show_settings
+;;
+edit)	## modify settings
+	do_configure
+;;
+*)
+	if [ -n "${ACTION}" -a "${ACTION}" != 'help' ] ; then
+		echo "$0: Unrecognised command '${ACTION}'"
+	fi
+	echo "$0: Usage:"
+	grep "^[0-9a-z]*)" $0 | sed "s/^/	/"
+	exit 1
+;;
+esac

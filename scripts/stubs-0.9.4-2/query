@@ -1,0 +1,109 @@
+#!/bin/sh
+##	query		(c)1999-2006 William Towle
+##	Last modified	25/07/2005, WmT
+##	Purpose		Query
+#
+#   Open Source software - copyright and GPLv2 apply. Briefly:
+#	- No warranty/guarantee of fitness, use is at own risk
+#	- No restrictions on strictly-private use/copying/modification
+#	- No re-licensing this work under more restrictive terms
+#	- Redistributing? Include/offer to deliver original source
+#   Philosophy/full details at http://www.gnu.org/copyleft/gpl.html
+
+
+BINDIR=`dirname $0`
+#. ${BINDIR}/scripts.cfg || exit 1
+. ${BINDIR}/lib/script-config || exit 1
+
+SEPS='[	 ]'
+
+show_list_entries()
+{
+	WS='[ ''	'']'
+
+	grep ${*} \
+	  | sed "s%${WS}${WS}*%/%" | sed "s%${WS}${WS}*% %g" \
+	  | while read SLE_FILE ; do
+		echo ${PKGCFG_DIR}'/'`echo ${SLE_FILE} | cut -c1 | tr 'A-Z' 'a-z'`"/${SLE_FILE}"
+	  done
+}
+
+show_list()
+{
+	SL_LSFILE=$1
+	shift
+
+	if [ -z "$1" ] ; then
+		show_list_entries ^[A-Za-z0-9] ${SL_LSFILE}
+	else
+		while [ "$1" ] ; do
+			show_list_entries ^$1 ${SL_LSFILE}
+			shift
+		done
+	fi
+}
+
+do_query_tchain()
+{
+	handle_load || exit 1
+	show_list ${LOC_TOOLCHAINS}/${USE_TOOLCHAIN}.lst ${*} || exit 1
+}
+
+do_query_distro()
+{
+	handle_load || exit 1
+	show_list ${LOC_DISTROS}/${USE_DISTRO}.lst ${*} || exit 1
+}
+
+do_query_lstfiles()
+{
+	if [ -z "$1" ] ; then
+		echo "$0: do_query_lstfiles(): No LSTFILE[s]" 1>&2
+		exit 1
+	else
+		while [ "$1" ] ; do
+			show_list $1 || exit 1
+			shift
+		done
+	fi
+}
+
+do_query_pkglist()
+{
+	do_query_lstfiles $* \
+	| sort -u \
+	| while read LSTSPEC ; do
+		set -- ${LSTSPEC}
+		echo $1 | sed 's%'${PWD}'/*%%'
+		done
+}
+
+
+##
+##	main program
+##
+
+COMMAND=$1
+[ "$1" ] && shift
+case ${COMMAND} in
+toolchain)	## query toolchain [for PACKAGE[s]]
+	do_query_tchain $* || exit 1
+;;
+distro)		## query distro [for PACKAGE[s]]
+	do_query_distro $* || exit 1
+;;
+lstfiles)	## query via LST file[s]
+	do_query_lstfiles $* || exit 1
+;;
+pkglist)	## query via LST file[s]
+	do_query_pkglist $* || exit 1
+;;
+*)
+	if [ -n "${COMMAND}" -a "${COMMAND}" != 'help' ] ; then
+		echo "$0: Unrecognised command '${COMMAND}'"
+	fi
+	echo "$0: Usage:"
+	grep "^[0-9a-z-]*)" $0 | sed "s/^/	/"
+	exit 1
+;;
+esac

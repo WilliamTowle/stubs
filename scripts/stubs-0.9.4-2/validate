@@ -1,0 +1,153 @@
+#!/bin/sh
+##	validate	(c)1999-2006 William Towle
+##	Last modified	24/09/2006, WmT
+##	Purpose		Validation
+#
+#   Open Source software - copyright and GPLv2 apply. Briefly:
+#	- No warranty/guarantee of fitness, use is at own risk
+#	- No restrictions on strictly-private use/copying/modification
+#	- No re-licensing this work under more restrictive terms
+#	- Redistributing? Include/offer to deliver original source
+#   Philosophy/full details at http://www.gnu.org/copyleft/gpl.html
+
+
+BINDIR=`dirname $0`
+. ${BINDIR}/lib/script-config || exit 1
+
+##
+##	subroutines
+##
+
+dl_filemode()
+{
+	DLURL=$1
+	TARGET=$2
+
+	ERROR=n
+	# wget -P <DIRECTORY> --passive-ftp <URL>
+	lynx -dump ${DLURL} > tempfile.$$ || ERROR=y
+	if [ ${ERROR} = 'y' ] ; then
+		rm tempfile.$$
+	else
+		mkdir -p `dirname ${TARGET}`
+		mv tempfile.$$ ${TARGET}
+	fi
+	[ ${ERROR} = 'n' ]
+}
+
+show_sources()
+{
+	CFGFILE=$1/package.cfg
+	. ${CFGFILE} || exit 2
+
+	echo "[ ${PKGNAME} ${PKGVER} ]"
+	echo "- config: ${CFGFILE}"
+	SS_FAILED=n
+	grep ^SRCDEP ${CFGFILE} | while read DEPLINE ; do
+		DEPVAR=`echo ${DEPLINE} | sed 's/=.*//'`
+		DEPVAL=`eval echo '$'${DEPVAR}`
+
+		URL=`echo ${DEPVAL} | sed 's/.* //'`
+		echo "- source: ${URL}"
+
+		SOURCE=${SOURCE_DIR}'/'`echo ${DEPVAL} | sed 's% .*/%%' | sed 's/\?.*$//'`
+		echo "- file: ${SOURCE}"
+
+		case ${POLICY} in
+		ensure)
+			if [ ! -r ${SOURCE} ] ; then
+				dl_filemode ${URL} ${SOURCE} || SS_FAILED=y
+			fi
+			;;
+		replace)
+			dl_filemode ${URL} ${SOURCE} || SS_FAILED=y
+			;;
+		*)
+			if [ ! -r ${SOURCE} ] ; then
+				echo "@@@ THIS FILE MISSING @@@"
+				SS_FAILED=y
+			fi
+			;;
+		esac
+		[ ${SS_FAILED} = 'n' ]
+	done || SS_FAILED=y
+	[ ${SS_FAILED} = 'n' ]
+}
+
+show_checks()
+{
+	PKGFILE=$1
+
+	SC_OK=y
+	if [ ! -r ${PKGFILE} ] ; then
+		echo "$0: PKGFILE ${PKGFILE} MISSING" 1>&2
+		SC_OK=n
+	else
+		show_sources ${PKGFILE} || SC_OK=n
+	fi
+
+	[ ${SC_OK} = 'y' ]
+}
+
+show_query()
+{
+	SV_OK=y
+	${BINDIR}/query ${QUERY} ${*} | sed 's/ .*//' \
+	  | while read CFGFILE ; do
+		show_checks ${CFGFILE} || SV_OK=n
+		[ ${SV_OK} = 'y' ]
+	done || SV_OK=n
+	[ ${SV_OK} = 'y' ]
+}
+
+do_validate()
+{
+	if [ ${QUERY} != 'files' ] ; then
+		# 'toolchain' and 'distro' list everything if no args:
+		show_query $*
+	elif [ -z "$1" ] ; then
+		# 'files' and no other arguments is an error:
+		echo "$0: Expected FILE[s]" 1>&2
+		exit 1
+	else
+		for ARG in $* ; do
+			if [ -f ${ARG} ] ; then
+				QUERY=lstfiles show_query ${ARG}
+			elif [ -r ${ARG}/package.cfg ] ; then
+				show_sources ${ARG}
+			else
+				echo "$0: Confused - ARG ${ARG} (no package.cfg?)" 1>&2
+				exit 1
+			fi
+		done
+	fi
+}
+
+##
+## main program
+##
+
+COMMAND=$1
+[ "$1" ] && shift
+case ${COMMAND} in
+toolchain)	## validate toolchain content [just PACKAGE[s]]
+	QUERY=toolchain do_validate $* || exit 1
+	echo "$0: VALIDATE TOOLCHAIN phase OK"
+	;;
+distro)		## validate distro content [just PACKAGE[s]]
+	QUERY=distro do_validate $* || exit 1
+	echo "$0: VALIDATE DISTRO phase OK"
+	;;
+files)		## validate DIRECTORY[/ies] or LST file[s] content
+	QUERY=files do_validate $* || exit 1
+	echo "$0: VALIDATE FILES phase OK"
+	;;
+*)
+	if [ -n "${COMMAND}" -a "${COMMAND}" != 'help' ] ; then
+		echo "$0: Unrecognised command '${COMMAND}'"
+	fi
+	echo "$0: Usage:"
+	grep "^[0-9a-z-]*)" $0 | sed "s/^/	/"
+	exit 1
+	;;
+esac
