@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="11361"
+   name=""
+   committed-date="2005-09-08T00:25:27.652120Z"
+   url="svn://uclibc.org/trunk/buildroot/package/xorg"
+   last-author="vapier"
+   kind="dir"
+   uuid="69ca8d6d-28ef-0310-b511-8ec308f3f277"
+   revision="14469"/>
+<entry
+   committed-rev="11361"
+   name="xorg-config.patch"
+   text-time="2006-03-08T08:15:24.000000Z"
+   committed-date="2005-09-08T00:25:27.652120Z"
+   checksum="52717463fa2a9cc4e6dea5971b47a59b"
+   last-author="vapier"
+   kind="file"
+   prop-time="2006-03-08T08:15:24.000000Z"/>
+<entry
+   committed-rev="10309"
+   name="xorg-6.8.2-xterm.patch"
+   text-time="2006-03-08T08:15:24.000000Z"
+   committed-date="2005-05-12T22:22:29.765219Z"
+   checksum="32d7acc8343f729701a29342162b8cfb"
+   last-author="andersen"
+   kind="file"
+   prop-time="2006-03-08T08:15:24.000000Z"/>
+<entry
+   committed-rev="11361"
+   name="xorg.mk"
+   text-time="2006-03-08T08:15:24.000000Z"
+   committed-date="2005-09-08T00:25:27.652120Z"
+   checksum="9f253372cfb7c37b655d578373fd303b"
+   last-author="vapier"
+   kind="file"
+   prop-time="2006-03-08T08:15:24.000000Z"/>
+<entry
+   committed-rev="10309"
+   name="xorg-6.8.2-linux_config.patch"
+   text-time="2006-03-08T08:15:24.000000Z"
+   committed-date="2005-05-12T22:22:29.765219Z"
+   checksum="acdfe82713d65d05c54eb38e2d9a7f7f"
+   last-author="andersen"
+   kind="file"
+   prop-time="2006-03-08T08:15:24.000000Z"/>
+<entry
+   committed-rev="10309"
+   name="Config.in"
+   text-time="2006-03-08T08:15:24.000000Z"
+   committed-date="2005-05-12T22:22:29.765219Z"
+   checksum="4e03b6b4f10605d9b07e84b0b41782d5"
+   last-author="andersen"
+   kind="file"
+   prop-time="2006-03-08T08:15:24.000000Z"/>
+<entry
+   committed-rev="10309"
+   name="xorg-uclibc.patch"
+   text-time="2006-03-08T08:15:24.000000Z"
+   committed-date="2005-05-12T22:22:29.765219Z"
+   checksum="52214a52e05c7dd513c80fdcba60191e"
+   last-author="andersen"
+   kind="file"
+   prop-time="2006-03-08T08:15:24.000000Z"/>
+</wc-entries>

@@ -1,0 +1,6 @@
+cd pump-0.7.3
+make pump CC=arm-linux-gcc \
+	  RPM_OPT_FLAGS=-I/usr/arm-linux/include/ \
+	  LOADLIBES="-lpopt -lresolv -L/usr/arm-linux/lib/"
+mkdir _install _install/sbin
+make install RPM_BUILD_ROOT=`pwd`/_install
