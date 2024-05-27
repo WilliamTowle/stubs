@@ -1,0 +1,14 @@
+SLACKWARE 3.9 ROOTFS PREPARATION
+================================
+
+Useful components
+
+swunrd.sh - quick rootfs extract script
+
+kernel bzImage-net.i	ftp://ftp.no.debian.org/pub/linux/slackware/slackware-3.9/kernels/net.i/bzImage
+
+rootfs rescue.gz	ftp://ftp.no.debian.org/pub/linux/slackware/slackware-3.9/rootdsks/
+
+# ./scripts/swunrd.sh  /opt/freglx/etc/sources/SW39/rescue.gz /var/tmp/sw39
+
+:(	RHEL host -> segmentation fault running anything

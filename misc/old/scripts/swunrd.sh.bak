@@ -1,0 +1,63 @@
+#!/bin/sh
+
+if [ "${UID}" != '0' -a "${UID}#${USER}" != '#root' ] ; then
+	echo "$0: Not root" 1>&2
+	exit 1
+fi
+
+if [ -z "$1" ] ; then
+	echo "$0: No INITRD archive" 1>&2
+	exit 1
+else
+	INITRDGZ=$1
+	shift
+fi
+
+if [ -z "$1" ] ; then
+	echo "$0: No EXTDIR" 1>&2
+	exit 1
+else
+	EXTDIR=$1
+	shift
+fi
+
+[ "${TMPDIR}" ] || TMPDIR=./tmp
+
+mkdir -p ${EXTDIR} ${TMPDIR}/mnt
+gzip -dc ${INITRDGZ} > ${TMPDIR}/rdungz.$$
+if [ ! -r ${TMPDIR}/rdungz.$$ ] ; then
+	echo "$0: FATAL - aborting" 1>&2
+	exit 1
+fi
+
+OK=y
+(
+	if [ /bin/busybox -ef /bin/mount -a ! -r /proc/filesystems ] ; then
+		echo "No /proc/filesystems, can't 'mount -t auto'" 1>&2
+		exit 1
+	fi
+
+	echo "$0: Mounting..."
+	mount -t auto -o loop ${TMPDIR}/rdungz.$$ ${TMPDIR}/mnt || exit 1
+	if [ /bin/busybox -ef /bin/mount ] ; then
+		LOOPDEV=` df ${TMPDIR}/mnt | grep '/dev/' | sed 's/ .*//' `
+	else
+		# classic 'df' shows the loop-mounted file :(
+		LOOPDEV=` grep ${TMPDIR}/mnt /proc/mounts | sed 's/ .*//' `
+	fi
+
+	echo "$0: Copying..."
+	( cd ${TMPDIR}/mnt && tar cvf - . ) | ( cd ${EXTDIR} && tar xvf - )
+
+	umount ${LOOPDEV}
+	losetup -d ${LOOPDEV}
+) || OK=n
+
+rm -f ${TMPDIR}/rdungz.$$
+rmdir ${TMPDIR}/mnt ${TMPDIR}
+if [ "${OK}" = 'n' ] ; then
+	echo "$0: Failed" 1>&2
+	exit 1
+else
+	exit 0
+fi

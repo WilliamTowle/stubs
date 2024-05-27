@@ -1,0 +1,13 @@
+# =====================================================================
+# 'xdc-mini' - cross-userland for miniroot
+# ---------------------------------------------------------------------
+
+
+# ----- UTILITIES - BASE SYSTEM ---------------------------
+# PACKAGE	VERSION		BUILDMODE (N|C + T|U + I|P)
+
+xdc-uClibc	0.9.28.3	CUI
+xdc-busybox	1.16.0		CUI
+
+xdc-lx26incl	2.6.20.1	CUI
+xdc-lx26bin	2.6.20.1	CUI

@@ -1,0 +1,12 @@
+# =====================================================================
+# 'xdc-uperl' - cross-userland for microperl
+# ---------------------------------------------------------------------
+
+
+# ----- UTILITIES - BASE SYSTEM ---------------------------
+# PACKAGE	VERSION		BUILDMODE (N|C + T|U + I|P)
+
+xdc-uClibc	0.9.28.3	CUI
+xdc-busybox	1.16.0		CUI
+
+xdc-uperl	5.8.9		CUI

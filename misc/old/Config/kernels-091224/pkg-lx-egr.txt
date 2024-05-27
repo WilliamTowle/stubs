@@ -1,0 +1,31 @@
+# egr (earlgrey) 'idx.txt'
+# PACKAGE	VERSION		BUILDMODE (N|C + T|U + I|P)
+
+## diffutils has 'cmp' dependency - ignore?
+#diffutils	2.8.7		NTI
+
+#bzip2		1.0.5		NTI
+
+# lung ching builds:
+#49 HTC_TARGETS+=htc-sed
+#50 HTC_TARGETS+=htc-diffutils
+#51 HTC_TARGETS+=htc-grep
+#52 HTC_TARGETS+=htc-coreutils
+#53 HTC_TARGETS+=htc-make
+#54 HTC_TARGETS+=htc-patch
+#55 HTC_TARGETS+=htc-flex
+#56 HTC_TARGETS+=htc-mawk
+#57 HTC_TARGETS+=htc-m4
+#58 HTC_TARGETS+=htc-bison
+#59 HTC_TARGETS+=htc-bash
+#60 HTC_TARGETS+=htc-findutils
+
+## bash needed something??
+##bash		2.05b		NTI
+#bash		3.2		NTI
+
+gcc		2.7.2.3		NTI
+
+# TODO: native headers is NUI/NTI, otherwise CTI
+## needs 'bzip2' to extract
+#linux		2.0.40		NTI

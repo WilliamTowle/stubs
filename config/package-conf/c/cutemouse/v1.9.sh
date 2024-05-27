@@ -1,0 +1,113 @@
+#!/bin/sh
+# cutemouse v1.9
+# Last modified WmT 2011-08-10
+# STUBS scripts and configurations (c) and GPLv2 Wm. Towle 1999-2011
+
+#	. package.cfg
+
+do_build_cui()
+{
+# CONFIGURE...
+	cd source || exit 1
+
+# BUILD...
+
+# INSTALL...
+	mkdir -p ${INSTTEMP}/dos/utils/ctmouse || exit 1
+#	UTILITY/MAKEFILE
+	cp UTILITY/MOUSETST.COM ${INSTTEMP}/dos/utils/ctmouse/mousetst.com || exit 1
+#	UTILITY/COMTEST.ASM
+#	UTILITY/MOUSETST.CPP
+	cp UTILITY/COMTEST.COM ${INSTTEMP}/dos/utils/ctmouse/comtest.com || exit 1
+	cp UTILITY/PROTOCOL.COM ${INSTTEMP}/dos/utils/ctmouse/protocol.com || exit 1
+#	UTILITY/PROTOCOL.ASM
+#	MAKEFILE
+#	CTM-PL.EXE
+#	PROTOCOL.TXT
+#	COPYING
+#	CTM-SK.MSG
+#	CTMOUSE.ASM
+#	CTM-IT.EXE
+#	CTM-HU.MSG
+#	CTMOUSE.TXT
+#	CTM-PT.EXE
+#	CTM-ES.EXE
+#	INT33.LST
+#	CTM-NL.EXE
+#	CTM-PL.MSG
+#	CTM-PT.MSG
+#	CTM-HU.EXE
+#	NATIONAL.BAT
+#	CTM-BR.MSG
+#	ALLLANG.BAT
+#	CTM-DE.MSG
+#	TECHNOTE.TXT
+#	CTM-BR.EXE
+#	CTM-FR.MSG
+#	CTM-SK.EXE
+#	ASMLIB
+#	ASMLIB/DOS
+#	ASMLIB/DOS/PSP.DEF
+#	ASMLIB/DOS/FILE.MAC
+#	ASMLIB/DOS/MEM.MAC
+#	ASMLIB/DOS/MCB.DEF
+#	ASMLIB/DOS/IO.MAC
+#	ASMLIB/HARD
+#	ASMLIB/HARD/PIC8259A.DEF
+#	ASMLIB/HARD/UART.DEF
+#	ASMLIB/ASM.MAC
+#	ASMLIB/CONVERT
+#	ASMLIB/CONVERT/COUNT2X.MAC
+#	ASMLIB/CONVERT/DIGIT.MAC
+#	ASMLIB/LGPL
+#	ASMLIB/CODE.MAC
+#	ASMLIB/CODE.DEF
+#	ASMLIB/BIOS
+#	ASMLIB/BIOS/AREA0.DEF
+#	ASMLIB/MACRO.MAC
+#	ASMLIB/HLL.MAC
+#	UNPACKED
+#	UNPACKED/CTM-PL.EXE
+#	UNPACKED/CTM-IT.EXE
+#	UNPACKED/CTM-PT.EXE
+#	UNPACKED/CTM-ES.EXE
+#	UNPACKED/CTM-NL.EXE
+#	UNPACKED/CTM-HU.EXE
+#	UNPACKED/CTM-BR.EXE
+#	UNPACKED/CTM-SK.EXE
+#	UNPACKED/CTM-LV.EXE
+	cp UNPACKED/CTM-EN.EXE ${INSTTEMP}/dos/utils/ctmouse/ctm-en.exe || exit 1
+#	UNPACKED/CTM-DE.EXE
+#	UNPACKED/CTM-FR.EXE
+#	INT10.LST
+	cp CTM-EN.MSG ${INSTTEMP}/dos/utils/ctmouse/ctm-en.msg || exit 1
+	cp COM2EXE.EXE ${INSTTEMP}/dos/utils/ctmouse/com2exe.exe || exit 1
+#	CTM-LV.EXE
+#	CTM-NL.MSG
+#	CTM-ES.MSG
+#	ASMLIB.CFG
+#	CTM-LV.MSG
+	cp CTMOUSE.EXE ${INSTTEMP}/dos/utils/ctmouse/ctmouse.exe || exit 1
+#	CTM-DE.EXE
+#	CTM-FR.EXE
+#	HISTORY.TXT
+#	FILES.LST
+#	CTM-IT.MSG
+#	EXTEND.TXT
+}
+
+##
+##	main program
+##
+
+BUILDTYPE=$1
+[ "$1" ] && shift
+case ${BUILDTYPE} in
+CUI)	## install to cross-userland
+	do_build_cui $* || exit 1
+;;
+*)
+	echo "$0: Unexpected BUILDTYPE '${BUILDTYPE}'" 1>&2
+	exit 1
+;;
+esac

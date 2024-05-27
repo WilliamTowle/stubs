@@ -1,0 +1,110 @@
+#!/bin/sh
+
+TOPLEV=`pwd`
+. ${TOPLEV}/Config/ENV/ifbuild.env || exit 1
+
+if [ -z "$1" ] ; then
+	echo "$0: No IDXFILE" 1>&2
+	exit 1
+else
+	IDXFILE=$1
+	shift
+fi
+
+do_uncomment()
+{
+	# uncomment from '#'; also filter blank lines
+	sed 's/#.*//' $* | sed 's/^ *//'
+}
+
+process_spec()
+{
+	PKG_NAME=$1
+	PKG_VER=$2
+	PKG_BUILDMODE=$3
+
+	echo "[ ${PKG_NAME} ver ${PKG_VER}, mode ${PKG_BUILDMODE} ]"
+	PKG_SUBDIR=${TOPLEV}/Config/package/`echo ${PKG_NAME} | sed 's/\(.\).*/\1/' | tr 'A-Z' 'a-z'`
+	PKG_CONFIG=${PKG_SUBDIR}/${PKG_NAME}-${PKG_VER}.cfg
+
+	if [ ! -r ${PKG_CONFIG} ] ; then
+		echo "$0: PKG_CONFIG ${PKG_CONFIG} missing" 1>&2
+		exit 1
+	fi
+
+	eval BUILD_${PKG_BUILDMODE}=y
+	. ${PKG_CONFIG}
+	if [ $? != 0 ] ; then
+		echo "$0: Unexpected result from importing configuration" 1>&2
+		exit 1
+	fi
+
+	if [ "${DEPS}" ] ; then
+		echo "$0: Dependencies for ${PKG_NAME}: ${DEPS}"
+		for DEP_NAME in ${DEPS} ; do
+			DEP_VER=` DBROOT=${TC_ROOT} ${SCRIPTBIN}/instmgr.sh query ${DEP_NAME} `
+			if [ -z "${DEP_VER}" ] ; then
+				echo "$0: ERROR: ${PKG_NAME} missing dependency ${DEP_NAME}" 1>&2
+				exit 1
+			fi
+		done
+	else
+		echo "$0: Dependencies: none for ${PKG_NAME}"
+	fi
+
+	case ${METHOD} in
+	mak)	# makefile
+		MF=${PKG_SUBDIR}/${PKG_NAME}-${PKG_VER}.mak
+		if [ ! -r ${MF} ] ; then
+			echo "$0: Script ${MF} not found" 1>&2
+			exit 1
+		else
+			echo "$0: Running makefile ${MF}" 1>&2
+			export TOPLEV PKG_NAME PKG_VER PKG_SRC PKG_PATCHES
+			make -f ${MF} all-${PKG_BUILDMODE} || exit 1
+		fi
+	;;
+	sh)	# shell script
+		SCRIPT=${PKG_SUBDIR}/${PKG_NAME}-${PKG_VER}.sh
+		if [ ! -r ${SCRIPT} ] ; then
+			echo "$0: Script ${SCRIPT} not found" 1>&2
+			exit 1
+		else
+			echo "$0: Running build script ${SCRIPT}" 1>&2
+			export TOPLEV PKG_NAME PKG_VER PKG_SRC PKG_PATCHES
+			${SCRIPT} ${PKG_BUILDMODE} || exit 1
+		fi
+	;;
+	*)
+		echo "$0: Unexpected build-method '${METHOD}'" 1>&2
+		exit 1
+	;;
+	esac
+
+	DBROOT=${TC_ROOT} ${SCRIPTBIN}/instmgr.sh upgrade ${PKG_NAME} ${PKG_VER} || exit 1
+	echo "$0: Build and package tracking done"
+}
+
+process_idx()
+{
+	if [ ! -r ${TC_ROOT}/opt/freglx/etc/pkgver.dat ] ; then
+		 DBROOT=${TC_ROOT} ${SCRIPTBIN}/instmgr.sh init
+	fi
+
+	echo "$0: Processing ${IDXFILE}"
+
+	BAIL=n
+	do_uncomment ${IDXFILE} | while read IDXSPEC ; do
+		# don't bail on comment lines!
+		[ -z "${IDXSPEC}" ] || process_spec ${IDXSPEC} || exit 1
+	done || BAIL=y
+
+	if [ "${BAIL}" = 'y' ] ; then
+		echo "$0: Aborting due to failure" 1>&2
+		exit 1
+	fi
+}
+
+
+process_idx ${IDXFILE}
+echo "$0: Done"

@@ -1,0 +1,46 @@
+RATIONALE
+---------
+
+Two basic aims:
+- Generate native- and cross-built utilities as required
+- Support use in very minimal environments
+
+
+* NUI - Native Userland Installs
+
+  Assuming a very minimal environment -i.e. a rare case of
+only a shell and simple archive/package management tools being
+available- we must have the ability to operate exclusively from
+scripts. Ideally, the first of these does a sanity check on the
+base environment and the scripts' configuration, and subsequent
+scripts install missing tools (compiler/assembler/advanced
+package management system) into the base system.
+
+
+* NTI - Native Toolchain Installs
+
+  Given a base system in which building code from source is
+possible, we should be able to replace or create the
+absent/obsolete tools with appropriate new ones. Assuming we're
+starting from a system which had its own compiler, the ideal
+sanity check includes locating and testing it for suitability;
+subsequently, we build the accompanying tools for the job at
+hand.
+
+
+* CTI - Cross Toolchain Installs
+
+  Once there is a guarantee that the base system has a sane
+compiler and associated tools, the option becomes available to
+build for non-native platforms. The bringup scripts for this
+stage add preconfiguration for a cross-compiler, which is then
+added to the toolchain.
+
+
+* CUP - Cross Package Installs
+
+  The final step in building an alien system from source: given
+a sane cross compiler and related toolchain components
+(libraries, package management utilities), we can generate
+components for other systems than the one on which we are
+building.

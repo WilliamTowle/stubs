@@ -1,0 +1,22 @@
+# =====================================================================
+# slackware 3.9 base system installation
+# ---------------------------------------------------------------------
+
+# ----- SANITY CHECKS/RELATED PREREQUISTES ----------------
+# PACKAGE       VERSION         BUILDMODE (N|C + T|U + I|P)
+
+# TODO: NTI phase sanity check probably insufficient
+# TODO: scripts remain uninstalled
+
+sanity		0.1		NTI
+sw39-tools	0.9		NTI
+
+
+# ----- FINAL SANITY CHECKS/MINIROOT CREATION -------------
+# PACKAGE       VERSION         BUILDMODE (N|C + T|U + I|P)
+
+# TODO: CTI phase sanity check probably insufficient
+# TODO: need new script which runs 'swunrd'
+# TODO: possible need for additional device nodes
+
+#sanity		0.1		CUI

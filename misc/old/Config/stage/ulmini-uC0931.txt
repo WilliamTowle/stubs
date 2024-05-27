@@ -1,0 +1,21 @@
+# =====================================================================
+# cross-built userland-miniroot with uClibc 0.9.31 (dev)
+# ---------------------------------------------------------------------
+
+# NB. base system still uses 'FUDGE_*_INSTROOT' for installs
+
+# prerequistites
+# htcmin
+# kspace compiler (and kernel headers)
+# full cross compiler
+
+# busybox fails due to lack of 'utime.h'
+
+
+# ----- UTILITIES - BASE SYSTEM ---------------------------
+# PACKAGE	VERSION		BUILDMODE (N|C + T|U + I|P)
+
+xui-uClibc	0.9.31		CUI
+
+xui-busybox	1.2.2.1		CUI
+#xui-busybox	1.16.1		CUI

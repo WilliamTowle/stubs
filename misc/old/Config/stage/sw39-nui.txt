@@ -1,0 +1,20 @@
+# =====================================================================
+# slackware 3.9 rescue-miniroot extensions
+# ---------------------------------------------------------------------
+
+sanity		0.1		NUI
+
+# ----- UTILITIES - BASE SYSTEM ---------------------------
+# PACKAGE       VERSION         BUILDMODE (N|C + T|U + I|P)
+
+nui-ldso	1.9.9		NUI
+nui-libc	5.4.46		NUI
+nui-bzip2	0.9.0b		NUI
+
+
+# ----- UTILITIES - DEVELOPMENT ---------------------------
+# PACKAGE       VERSION         BUILDMODE (N|C + T|U + I|P)
+
+nui-binutils	2.9.1		NUI
+nui-gmake	3.76.1		NUI
+nui-gcc		2.7.2.3		NUI

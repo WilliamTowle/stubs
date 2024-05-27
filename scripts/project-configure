@@ -1,0 +1,55 @@
+#!/bin/sh
+##	project-configure	STUBS (c)1999-2010 William Towle
+##	Last modified		2010-12-28, WmT
+##	Purpose			manage project-specific settings
+#
+#*   Open Source software - copyright and GPLv2 apply. Briefly:       *
+#*    - No warranty/guarantee of fitness, use is at own risk          *
+#*    - No restrictions on strictly-private use/copying/modification  *
+#*    - No re-licensing this work under more restrictive terms        *
+#*    - Redistributing? Include/offer to deliver original source      *
+#*   Philosophy/full details at http://www.gnu.org/copyleft/gpl.html  *
+
+BINDIR=`dirname $0`
+LIBDIR=${BINDIR}/lib
+
+#. ${LIBDIR}/proj-config.sh || exit 1
+. ${LIBDIR}/lib-config.sh
+lib_init project
+
+do_show()
+{
+	proj_do_show
+}
+
+##
+##	main program
+##
+
+ACTION=$1
+[ "$1" ] && shift
+case ${ACTION} in
+show)		## show project settings
+	do_show || exit 1
+;;
+stages)		## show/set project number-of-stages
+	proj_configure_stages ${1+"$@"} || exit 1
+;;
+stagetype)	## show/set project type-of-stage
+	proj_configure_stagetype ${1+"$@"} || exit 1
+;;
+stageconf)	## show/set stage-config file for stage
+	proj_configure_stageconf ${1+"$@"} || exit 1
+;;
+targetcpu)	## show/set target CPU
+	proj_configure_target_cpu ${1+"$@"} || exit 1
+;;
+*)
+	if [ "${ACTION}" -a "${ACTION}" != 'help' ] ; then
+		echo "$0: Unrecognised command '${ACTION}'"
+	fi
+	echo "$0: Usage:"
+	grep "^[0-9a-z-]*)" $0 | sed "s/^/	/"
+	exit 1
+;;
+esac

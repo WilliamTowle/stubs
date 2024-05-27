@@ -1,0 +1,22 @@
+# =====================================================================
+# cross-built userland with uClibc, miniperl (dev)
+# ---------------------------------------------------------------------
+
+# NB. base system still uses 'FUDGE_*_INSTROOT' for installs
+
+# prerequisites:
+# htcmin
+# kspace compiler (and kernel config/headers)
+# full cross compiler
+
+
+# ----- UTILITIES - BASE SYSTEM ---------------------------
+# PACKAGE	VERSION		BUILDMODE (N|C + T|U + I|P)
+
+xui-uClibc	0.9.26		CUI
+#xui-uClibc	0.9.30.2	CUI
+xui-busybox	1.2.2.1		CUI
+#xui-busybox	1.16.1		CUI
+
+xui-uperl	5.8.9		CUI
+#xui-uperl	5.12.0		CUI

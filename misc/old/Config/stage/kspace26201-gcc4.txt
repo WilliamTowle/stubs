@@ -1,0 +1,29 @@
+# =====================================================================
+# kernel-space (2.6) cross toolchain with gcc4
+# ---------------------------------------------------------------------
+
+# ----- UTILITIES -------------------------------------------------
+# PACKAGE		VERSION		BUILDMODE (N|C + T|U + I|P)
+
+## diffutils has 'cmp' dependency - ignore?
+#diffutils		2.8.7		NTI
+
+# grep for coreutils configure (...with old busybox?)
+# v2.6 only needs coreutils/recent busybox
+grep			2.5.1a		NTI
+coreutils		5.97		NTI
+
+#bzip2			1.0.5		NTI
+
+
+# ----- ASSEMBLER/COMPILER/KERNEL ---------------------------------
+# PACKAGE		VERSION		BUILDMODE (N|C + T|U + I|P)
+
+legtc-kbinutils		2.17		CTI
+legtc-kgcc		4.1.2		CTI
+
+# becomes 'x64'-capable at some point after 2.6.20
+legtc-lx26config	2.6.20.1	CTI
+#mctc-linux26		2.6.20.1	CTI
+# perl dependency in 2.6.28 :(
+##mctc-linux26		2.6.28		CTI

@@ -1,0 +1,39 @@
+# =====================================================================
+# 'xdc-lchtc' - cross-userland for Lung Ching toolchain
+# ---------------------------------------------------------------------
+
+
+# ----- UTILITIES - BASE SYSTEM ---------------------------
+# PACKAGE	VERSION		BUILDMODE (N|C + T|U + I|P)
+
+xdc-uClibc	0.9.28.3	CUI
+xdc-busybox	1.16.0		CUI
+xdc-sed		4.1.5		CUI
+xdc-findutils	4.2.33		CUI
+# grep?
+
+
+# ----- UTILITIES - ARCHIVAL ------------------------------
+# PACKAGE	VERSION		BUILDMODE (N|C + T|U + I|P)
+
+xdc-diffutils	2.8.7		CUI
+xdc-bzip2	1.0.5		CUI
+# FUDGE - gzip now v1.4
+xdc-gzip	1.3.12		CUI
+xdc-tar		1.13		CUI
+#XDC_TARGETS+=xdc-tar
+
+
+# ----- UTILITIES - DEVELOPMENT ---------------------------
+# PACKAGE	VERSION		BUILDMODE (N|C + T|U + I|P)
+
+xdc-make	3.81		CUI
+xdc-lx26incl	2.6.20.1	CUI
+xdc-uCdevel	0.9.28.3	CUI
+xdc-binutils	2.16.1		CUI
+xdc-gcc		4.1.2		CUI
+
+# ----- UTILITIES - MISCELLANEOUS -------------------------
+# PACKAGE	VERSION		BUILDMODE (N|C + T|U + I|P)
+
+#XDC_TARGETS+=xdc-ncurses

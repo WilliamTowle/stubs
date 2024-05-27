@@ -1,0 +1,27 @@
+# =====================================================================
+# kernel-space (pre-2.6) cross toolchain with gcc2
+# ---------------------------------------------------------------------
+
+# prerequisites:
+# htcmin
+
+# ----- UTILITIES - BASE SYSTEM -----------------------------------
+# PACKAGE		VERSION		BUILDMODE (N|C + T|U + I|P)
+
+### diffutils has 'cmp' dependency - ignore?
+##diffutils		2.8.7		NTI
+#
+##grep			2.5.1a		NTI
+#
+##coreutils		5.97		NTI
+#
+##bzip2			1.0.5		NTI
+
+legtc-kbinutils		2.16.1		CTI
+legtc-kgcc		2.95.3-2	CTI
+
+# ----- KERNELS - BINARY/HEADERS ----------------------------------
+# PACKAGE		VERSION		BUILDMODE (N|C + T|U + I|P)
+# bash dependency in 2.0.40, 2.2.26, 2.4.37
+
+legtc-lx24config	2.4.37		CTI

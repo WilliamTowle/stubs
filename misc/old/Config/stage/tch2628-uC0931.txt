@@ -1,0 +1,33 @@
+# =====================================================================
+# userland (2.6.28) cross toolchain with gcc4
+# ---------------------------------------------------------------------
+
+# prerequisites:
+# uhtc-gcc (htcmin-gcc2 sufficient?)
+# kstc-binutils (kspace26-gcc4)
+
+# ----- SUPPORT UTILITIES -----------------------------------------
+# PACKAGE		VERSION		BUILDMODE (N|C + T|U + I|P)
+
+## grep, coreutils for uClibc (TODO: restore?)
+#grep			2.5.1a		NTI
+#coreutils		5.97		NTI
+
+# ----- KERNEL HEADERS --------------------------------------------
+# PACKAGE		VERSION		BUILDMODE (N|C + T|U + I|P)
+
+ultc-lx26incl		2.6.28		CTI
+
+
+# ----- C LIBRARY/RUNTIME -----------------------------------------
+# PACKAGE		VERSION		BUILDMODE (N|C + T|U + I|P)
+
+#ultc-uClibc		0.9.28.3	CTI
+#ultc-uClibc		0.9.30.2	CTI
+ultc-uClibc		0.9.31		CTI
+
+# ----- ASSEMBLER/COMPILER ----------------------------------------
+# PACKAGE		VERSION		BUILDMODE (N|C + T|U + I|P)
+
+ultc-binutils		2.17		CTI
+ultc-gcc		4.1.2		CTI

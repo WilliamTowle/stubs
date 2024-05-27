@@ -1,0 +1,494 @@
+2018-03-24
+==========
+
+* Revert busybox selection:
+	...to previous download of v1.27.2
+	...due to download problems with site
+
+* gcc 4.7.4 pthread.h dependency (in xlibgcc)
+	...notes say --disable-threads stops pthread.h being a requirement
+	...notes also say that we *want* --enable-threads
+	...and also LINUXTHREADS_NEW in qdul-ucl{dev|rt}?
+	...uClibc notes say pixman wants LINUXTHREADS_NEW, HAS_THREADS_NATIVE
+
+* gcc 4.8.5+ negative array size complaint from real.h ('gcc-all' rule)
+	...even if {CC|AS|LD|AR|NM}_FOR_BUILD is set to /usr/bin/gcc et al
+	...due to expecting g++ (also ${HOSTSPEC}- prefix on tools)
+
+
+2018-03-17
+==========
+
+* 'deb8' configuration
+-> TODO: iFOO-ar could not load libc.so.0 - libbdf.la failed
+	...follows qdul-xlibgcc (at 4.7.4; works)
+	...during qdul-binutils
+-> TODO: "cc1: error: no include path in which to search for stdc-predef.h"
+	...during xlibgcc build for gcc 4.8.5
+	...not provided by uClibc? Debian's package is libc6-dev
+	...file (/usr/include/stdc-predef.h) mentions no C11 <threads.h> support
+-> gcc *4.7.4* can fail due to missing pthread.h
+
+
+2017-07-08
+==========
+
+* configurations
+-> TODO: check NTI vs CTI versions of hb-qdtc-sanity
+-> TODO: check versions for hb-qd{tc|ul}-ucldev
+	...v4.1.39/4.2.8 kernel fails uClibc 'libc/inet/if_index.os' recipe
+
+
+2017-03-15
+==========
+
+* configurations:
+-> DONE: kernel updates:
+	...v3.10 kernel update to 3.10.105
+	...v3.12 kernel update to 3.12.51
+	...v3.14 kernel update to 3.14.79
+
+
+2017-03-04
+==========
+
+* configurations:
+-> DONE: backport/preserve 'deb8' config in 'deb7' build; cleanse
+-> DONE: initial 'tcbase' for deb7/deb8-era builds
+	...building this needs host toolchain 'xz'
+
+
+2017-02-02
+==========
+
+* 'deb8' build:
+-> TODO: sanitise userland builds for 'gcc'
+	...hb_qdul_xlibgcc fails due to "size of array 'test_real_width'"
+	...and probably other gcc-related builds
+-> TODO: sanitise CPU/target selection:
+	...have toolchain/etc/buildcfg.mk with $TARGCPU, $TARGSPEC
+	...'homebrew' substring is hardwired there too :(
+	...vs 'project-configure' showing "UNSET" for target CPU
+
+
+2017-02-01
+==========
+
+* 'deb8' build:
+-> DONE: sanitise uClibc build(s)
+	...trying abbreviated uClibc config against kernel 4.0
+-> DONE: sanitise gcc build(s)
+	...trying: limit 'make' to {all|install}-gcc targets
+	...trying: userland libgcc confused about 'test_real_width'
+-> DONE: sanitise userland builds for 'make',
+	...'make' wants glob_t with gl_{opendir|readdir|closedir|stat}
+
+
+2017-01-30
+==========
+
+* 'deb8' build:
+-> DONE: (part-)updated kernel selection (v4.1.15 -> v4.0)
+-> DONE: (part-)updated gcc build(s) (v4.4.x -> v4.8.5)
+
+
+2016-01-25
+==========
+
+* https://wiki.archlinux.org/index.php/ASUS_Eee_PC_1001px
+- "integrated GPU is Pineview and supported with KMS by the i915 module"
+- "Wireless is fully supported by ath9k module in all (b/g/n) modes"
+	Atheros AR2427 WiFi; MAC 1c:4b:d6:f2:59:1b
+	Atheros AR8132 eth; MAC 48:5b:39:76:15:ca
+
+* also: there is a 3.10.95 kernel now
+
+
+2016-01-21
+==========
+
+* fix obsolete URLs;
+-> DONE: compinfx.zip (compinfo vUNKNOWN)
+	...ftp://ftp.ibiblio.org/pub/micro/pc-stuff/freedos/files/util/system/compinfx.zip
+	...ibiblio mostly now http://[blah]
+-> DONE: DEBUG118.zip
+	...http://www.japheth.de/Download/Debug/DEBUG118.zip
+
+
+2016-01-18
+==========
+ 
+* wmfd download testing
+-> TODO: check/fix 'wmfd' URLs
+	./misc/urldl.sh: WARNING: ./src/s/sys.zip is zero bytes
+-> DONE: fix 'sys.zip' install
+	...wmfd-3x introduced 'fd-sys' package
+	...needs backport to introduce v2036 for wmfd-2x
+-> TODO: check/fix 'wmut' URLs
+
+
+2015-04-01
+==========
+
+* kernels: longterm
+-> TODO: v3.10.73, with '--enable POWER_RESET' added
+-> FUTURE: 3.12.39, 3.14.37, 3.18.10
+-> FUTURE: newer 4.0.x?
+
+* kernels: 3.12 sound:
+...may need modular sound, with:
+	options snd-hda-intel model=3stack-dig
+...variant for EeePC 900:
+	options snd-hda-intel model=auto
+
+
+2015-02-05
+==========
+
+* sanitise toolchains/kernel configs
+-> DONE: i386-homebrew-linux-uclibc-kobjdump for 3.14.31+
+-> DONE: hb_qd-3x_lt-447.conf for "longterm" kernels
+-> DONE: hb_qd-3x_misc-447.conf for current 3.9.x and later
+-> TODO: hb_qd-test.conf with 3.18.5 support
+
+2015-01-12
+==========
+
+* wmfd
+-> DONE: updated URLs for drivers, cutemouse
+-> DONE: shsucdx 33e -> 33f -- ftp://ftp.ibiblio.org/pub/micro/pc-stuff/freedos/files/dos/shsucdx/
+-> DONE: cutemouse update -- http://www.ibiblio.org/pub/micro/pc-stuff/freedos/files/dos/cutemouse/
+
+
+2014-05-02
+==========
+
+* hbOS
+-> DONE: kernel configuration for 701SD wireless/framebuffer
+-> TODO: full build and test
+
+* publish? ...also new since 140202 release:
+- wmfd package updates
+- updated etc-devel with /etc/fb.modes
+- 'tcbase' deltas and 'xz' archive handling in build scripts
+
+
+2013-12-29
+==========
+
+* hbOS-2014_01
+-> DONE: prep sources
+-> DONE: build tests with "current" kernel(s)
+-> TODO: build with latest kernel/uClibc configuration ideas
+-> TODO: test 'initrd test' boot, openssh, mrxvt et al
+
+
+2013-06-02
+==========
+
+* wmfd
+-> DONE: gzip/tar URL updates
+-> DONE: UIDE 2012-10-15
+-> DONE: build test for all wmfd '3c' configurations
+-> TODO: build 'game01' for virtualbox screengrab
+
+
+2013-05-11
+==========
+
+* kernel/userland testing
+- 3.9 VIA framebuffer hang: "vmalloc=256M" helps slightly
+-> DONE: build 2.6.x/3.6.11; add libgcc package if required
+
+
+2013-04-17
+==========
+
+* wmfd
+-> DONE: 'v2X', 'v3X' toolchain
+-> DONE: wmfd-2X and wmfd-3X source trees
+-> DONE: wmut-2X and wmfd-2X source trees
+-> DONE: wmgame source trees
+-> TODO: other (sw39, ...) source trees
+
+
+2013-04-16
+==========
+
+$(MKSQUASHFS) ${RELEASE_DIR} ${IMAGE_FILE} -all-root -noappend -info -processors 1
+
+
+2013-04-09
+==========
+
+* kernel
+-> TODO: 'limits.h' problem with v3.8.6
+
+
+2013-02-04
+==========
+
+* kernel
+-> DONE: configs for 3.6.11
+-> TODO: build, test userland
+
+
+2013-01-28
+==========
+
+* userland updates:
+-> DONE: busybox now v1.21.0
+-> DONE: (minimal) '( cd $FOO && ...)' fixes
+
+
+2012-12-23
+==========
+
+* full "homebrew" toolchain
+-> DONE: implement phony-to-file target conversion (VERIFY=y)
+-> DONE: fix native builds and test with "VERIFY=y"
+-> TODO: fix cross builds and test with "VERIFY=y"
+
+* misc
+- addtraction fails to include SDL/SDL.h; wants source modified too
+- fbzx tries to build with 'cc' too
+
+
+2012-12-22
+==========
+
+* full "homebrew" toolchain
+-> TODO: 'coreutils' futimens() prototype differs from /usr/include
+-> TODO: CC/NATIVE_GCC and CFLAGS settings for 'configure's?
+-> TODO: consistent --prefix/--bindir values compared to tcdev?
+-> TODO: suitable URLs
+-> TODO: limited 'install's?
+-> TODO: patching for 'sed'?
+
+* misc
+-> TODO: test build configs (esp. q&d) against latest 'scripts' tree
+
+
+2012-12-12
+==========
+
+* [buildroot] uClibc should have (see buildroot):
+- DONE: LINUXTHREADS_OLD
+- DONE: MALLOC_STANDARD + MALLOC_GLIBC_COMPAT
+
+
+2012-12-10
+==========
+
+* cross compilation tailoring (hbOS userland requirements)
+-> TODO: real 'patch'; remove from busybox
+-> TODO: sed build
+-> TODO: grep build
+-> TODO: sed, grep removed from busybox
+-> TODO: coreutils? (with removal from busybox)
+
+
+2012-11-19
+==========
+
+* hd_qdul-lxsource
+-> DONE: config reference; skeleton config file
+-> DONE: builds OK
+
+
+2012-09-03
+==========
+
+* userland builds need make, others?
+-> DONE: hb436 OK
+-> DONE: hb412 OK
+-> FUTURE: successfully running 'configure' may need sed, grep
+
+* "hb412" toolchain miscellany
+-> TODO: needs 'make' for certain kernel builds - fails with v3.82
+-> TODO: kernel build can fail (on x86_64?) due to PATH_MAX definition
+
+* "hb436" toolchain/uClibc miscellany
+-> TODO: how to build toolchain 'ldd'
+-> TODO: how to build runtime 'ldconfig', toolchain 'ldd'
+
+
+2012-07-13
+==========
+
+* buildcfg/_SRCROOT support in userland packages
+-> DONE: implement
+-> DONE: build test
+
+* buildcfg/_SRCROOT support in toolchain packages
+-> DONE: implement
+-> DONE: build test
+
+* misc
+-> DONE: dependency information in build config file
+-> TODO: export dependency information to portlx (as 'include's)
+-> TODO: documentation lacks 'EARLIEST' versions/dates
+
+
+2012-04-01
+==========
+
+* check URL lists, outdatedness
+- DONE: build 2o
+- DONE: build 2p, 2p-utils
+- DONE: build 3cmini, 3c, 3c-utils
+- DONE: game01, game02, game03
+
+* collation from old sources
+- DONE: kernels
+- DONE: shells
+
+* other
+- DONE: 2o image for boot testing
+- DONE: 2p image for boot testing
+- DONE: 3c image for boot testing
+- sw39 configuration doesn't have disk content!
+
+
+2011-10-23
+==========
+
+* failed downloads
+- TODO: dos2unix 5.2.1 is obsolete (wmut-2q)
+
+* wmfd build test
+- DONE: wmfd-2o|2p|2q|2r
+- DONE: wmgame{01|02}
+- TODO: "Disk full" report with wmgame03 (du -k: 1520)
+
+
+2011-10-21
+==========
+
+* new ellis-drivers - v2011-1007
+- DONE: script/config
+- DONE: reference; build
+- TODO: test
+
+
+2011-07-22
+==========
+
+* reinvestigate, if useful:
+- crynwr network drivers
+- for usefulness: 'cdrom' (wmut-2.o)
+- dskimg: wmut-2o had v1.2, now UNKNOWN -- want 'dskimg12.zip'?
+- mp3tsr: uninvestigated -- just had the zip file installed
+- truemouse: failed to track down trumouse.zip (handmade??)
+- tsrplay3: uninvestigated -- just has the zip file installed
+- y2kfix: didn't find y2kfx13x.zip
+
+* changes from mbf-messy:
+- blOriginal/blscore (blockout)
+- choice v4.3a
+- diskcomp 06jun2003
+- fdxms 092
+- "gameroot" (means of loading 'nansi'?)
+- "hiker"
+- mkeyb
+- scandisk (v0.5)
+- "tarot2" (is this the 'game3' disk image?)
+- vim 6.1
+- vim 7.2: http://www.ibiblio.org/pub/micro/pc-stuff/freedos/files/edit/vim/7.2/ (never proven? move to utils?)
+- wills-sources
+
+
+2011-03-05
+==========
+
+`query urls` cryptic - "no EMITDATA"
+
+New gzip, tar:
+-rw-r--r-- 1 projadmin projects 119146 Mar  6 14:57 gzip.exe (LHA-SEA)
+-rw-r--r-- 1 projadmin projects 167936 Mar  6 14:57 tar.exe (DJGPP)
+
+Old gzip, tar:
+-rwxr-xr-x 1 projadmin projects  39910 Jul  8  2008 gzip.exe (LZEXE)
+-rwxr-xr-x 1 projadmin projects 121868 Jul  8  2008 gzip386.exe
+-rwxr-xr-x 1 projadmin projects  85979 Jul  8  2008 tar.exe (OS/2)
+
+lha: http://www.mirrorservice.org/sites/ftp.simtel.net/pub/simtelnet/msdos/arcers/lha255e.exe
+tar: http://www.mirrorservice.org/sites/ftp.simtel.net/pub/simtelnet/msdos/arcers/tar.zip
+
+
+2011-01-06
+==========
+
+* 'wmfd' non-simple toolchain
+- TODO: integrate sane compiler as prerequisite
+- TODO: integrate perl interpreter (for sys-freedos)
+
+
+2011-01-05
+==========
+
+* 'mkdisk' toolchain
+- DONE: sane minimal 'mkdisk' toolchain
+- TODO: 'mkdisk' full toolchain configuration (dvdrtools etc)
+- DONE(??): dvdrtools 0.2.1
+- TODO: isolinux 3.86, memdisk 3.86, memtest86plus 4.00 (or later)
+- TODO: nasm 2.08.01 (or later), binutils 2.17, gcc 4.1.2
+- integrate sane compiler
+
+
+2010-12-29
+==========
+
+* "lx20" build, rescmini chroot: kernel build prerequisites
+- findutils 4.2.29: wants to fread() /etc/mnttab; fails
+
+* "lx20" build, sencha chroot
+- findutils 4.2.29 wants an "acceptable grep"; needs PATH
+- any packages which need additional configure args?
+- which of these packages can be made compiler-sensitive?
+
+
+2010-12-27
+==========
+
+* STUBS general
+- reasons to keep the "old" directory tree: packages? scripts?
+- any build/qbuild handling differences??
+
+
+2010-12-26
+==========
+
+* "messy" toolchain
+- lacks a recent configuration file in config/project-conf
+- 'mkflop' in scripts/ belongs in toolchain
+- nasm: package config for 2.10rc1; .conf file differs
+-> TODO/DONE?: unzip 5.52/6.0 doesn't 'configure'
+-> TODO/DONE?: wmfd-init and need for staging directory already
+- integrate sane compiler for building with
+- integrate perl interpreter for running sys-freedos
+
+
+2010-11-24
+==========
+
+* PKGVER in filenames, not paths
+- 1. affects PKGDIR construction in pkgconf_transform_stageconf()
+- 2. means envfile is loaded earlier, to study BUILD_METHOD
+- 3. affects 'cp -ar' in do_pkgconf_build_init()
+
+* misc/long term
+- FUTURE: lib/stage.sh only accepts 'all' for now
+- FUTURE: how to configure scripts and makefiles equivalently?
+- FUTURE: script(s) for archiving project-specific configuration
+- FUTURE: patch handling and whether extraction should be automatic
+
+
+PREVIOUSLY
+==========
+
+* possibly useful for sw3.9 VM?
+- tftpdev kernel build
+- [u]dhcpd
+- wget
+- svgalib and/or DirectFB

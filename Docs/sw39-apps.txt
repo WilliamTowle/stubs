@@ -1,0 +1,22 @@
+SLACKWARE 3.9 APPLICATIONS PREPARATION
+======================================
+
+Useful components
+
+swinst.sh - quick software install script
+
+assembler, compiler, make, etc
+
+NOTE! Appears to fail in 'earlgrey' chroot??
+
+'test' tcng
+-----------
+
+* TODO
+- expects swinst.sh in ${SCRIPTBIN}; should be toolchain
+- toolchain 'sw39-tools' install doesn't
+
+Usage: ./scripts/build IDXFILE
+
+Config/stage/sw39-micro.txt: sanity check; sw39-tools NTI
+Config/stage/sw39-nui.txt: sanity check; ldso, libc, tools

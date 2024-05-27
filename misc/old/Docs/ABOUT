@@ -1,0 +1,17 @@
+OVERVIEW
+--------
+
+1. Prepare Config/ENV files - everything 'include's these
+2. Prepare an index file with packages, versions, build mode
+3. Build with scripts/ifbuild, supply index file
+
+NOTES
+-----
+
+- kernel 2.6 omits 'bash' dependency - uses 'wc', 'readlink', 'cut' (coreutils)
+
+
+TODO --  CONCERNS
+-----------------
+
+* issues installing 'gcc', 'make', etc. (tarballs) as per SW39

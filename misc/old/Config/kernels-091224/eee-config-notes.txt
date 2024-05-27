@@ -1,0 +1,14 @@
+[ http://sr.uz/media/blogs/sr/linux/eee.config ]
+
+does CONFIG_USB, CONFIG_USB_SUPPORT, CONFIG_USB_HID
+
+CONFIG_USB_{KBD,MOUSE} are off
+_ARCH_HAS_{HCD,OHCI,EHCI} are =y
+
+CONFIG_USB_EHCI_HCD=y
+CONFIG_USB_UHCI_HCD=y
+
+[ ftp://ftp.dyne.org/eeepc/kernel/config-2.6.21.4-dyneee ]
+CONFIG_INPUT_KEYBOARD
+CONFIG_INPUT_ATKBD=y
+

@@ -1,0 +1,63 @@
+#!/bin/sh
+
+if [ -z "$1" ] ; then
+	echo "$0: No EXTTEMP, EXTSUB, ARCHIVE[s]" 1>&2
+	exit 1
+else
+	EXTTEMP=$1
+	shift
+fi
+
+if [ -z "$1" ] ; then
+	echo "$0: No EXTSUB, ARCHIVE[s]" 1>&2
+	exit 1
+else
+	EXTSUB=$1
+	shift
+fi
+
+if [ -z "$1" ] ; then
+	echo "$0: No ARCHIVE[s]/PATCH[es]" 1>&2
+	exit 1
+fi
+
+handle_extract()
+{
+	EXTTEMP=$1
+	EXTSUB=$2
+	ARCHIVE=$3
+
+	case ${ARCHIVE} in
+	*.tar.bz2)
+		bzip2 -dc ${ARCHIVE} | ( cd ${EXTTEMP} && tar xvf - )
+		if [ ! -d ${EXTTEMP}/${EXTSUB} ] ; then
+			echo "$0: Bailing: failed to create EXTSUB ${EXTSUB}" 1>&2
+			exit 1
+		fi
+	;;
+	*.tar.gz|*.tgz)
+		gzip -dc ${ARCHIVE} | ( cd ${EXTTEMP} && tar xvf - )
+		if [ ! -d ${EXTTEMP}/${EXTSUB} ] ; then
+			echo "$0: Bailing: failed to create EXTSUB ${EXTSUB}" 1>&2
+			exit 1
+		fi
+	;;
+	*.patch)
+		cp ${ARCHIVE} ${EXTTEMP}/${EXTSUB} || exit 1
+	;;
+	*)
+		echo "$0: Unexpected ARCHIVE format ${ARCHIVE}" 1>&2
+		exit 1
+	;;
+	esac
+}
+
+mkdir -p ${EXTTEMP}
+while [ "$1" ] ; do
+	SRC=$1
+	shift
+
+	handle_extract ${EXTTEMP} ${EXTSUB} ${SRC} || exit 1
+done
+
+echo "$0: DONE"

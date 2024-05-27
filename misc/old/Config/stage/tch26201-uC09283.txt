@@ -1,0 +1,29 @@
+# =====================================================================
+# cross toolchain for post-2.6 kernels
+# "Lung Ching" -- binutils 2.17/gcc 4/uClibc 0.9.2x
+# ---------------------------------------------------------------------
+
+# ----- SUPPORT UTILITIES -----------------------------------------
+# PACKAGE		VERSION		BUILDMODE (N|C + T|U + I|P)
+
+#grep			2.5.1a		NTI
+#coreutils		5.97		NTI
+
+# ----- KERNEL HEADERS --------------------------------------------
+# PACKAGE		VERSION		BUILDMODE (N|C + T|U + I|P)
+
+# 2.0.x, 2.2.x, 2.4.x require bash (of course?!)
+#legtc-lx24src		2.4.37		CTI
+legtc-lx26src		2.6.20.1	CTI
+
+# ----- C LIBRARY/RUNTIME -----------------------------------------
+# PACKAGE		VERSION		BUILDMODE (N|C + T|U + I|P)
+
+#legtc-uClibc		0.9.26		CTI
+legtc-uClibc		0.9.28.3	CTI
+
+# ----- ASSEMBLER/COMPILER ----------------------------------------
+# PACKAGE		VERSION		BUILDMODE (N|C + T|U + I|P)
+
+#legtc-binutils		2.17		CTI
+legtc-gcc		4.1.2		CTI

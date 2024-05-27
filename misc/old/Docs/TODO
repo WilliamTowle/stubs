@@ -1,0 +1,141 @@
+2010-08-16
+==========
+
+* swunrd
+- direct reference to 'losetup' :( ...universally in /sbin?
+- rescue.gz: at ftp://ftp.no.debian.org/pub/linux/slackware/slackware-3.9/rootdsks/
+
+
+2010-08-15
+==========
+
+* tftpdev
+- 'bzip2' useful (not in the sw3.9 default install)
+
+
+2010-05-27
+==========
+
+* On build failures
+- `patch -d ...` broken for all uClibc builds? See ultc- for 0.9.28.3
+
+
+2010-05-18
+==========
+
+* Legacy Toolchains:
+- sane assembler patching -- TODO
+- sane compiler patching -- TODO
+- dynamic linking for "bancha" config -- FAIL
+- dynamic linking for "lung ching" config -- TODO
+- running executables -- TODO
+
+
+2010-03-26
+==========
+
+* xdc-mini ("miniroot")
+- prerequisites: recent Lung Ching toolchain
+- TODO: matching kernel build (needs xdc-lx26incl-2.6.20.1?)
+
+
+2010-03-15
+==========
+
+Useful:
+- microperl (see xdc-uperl)
+- NFSroot-capable kernel
+- Qingy/SDL (kernel with framebuffer and NFSroot support)
+- SVGAlib, possibly
+
+
+2010-03-11
+==========
+
+* xdc-lchtc, current
+- prerequisites: 'htc' and 'xtc' stages of Lung Ching build
+- uClibc, busybox builds and works (DONE)
+- other base tools build and work (DONE)
+- archival tools build and work (DONE)
+- development tools build and work (TODO) (needs patches?)
+- linux kernel and headers (TODO)
+
+* xdc-lchtc, future
+- '.cfg' dependences wrong -- mark as "runtime requires..."
+- cross-compiler for? (lch -> geex?)
+- above needs rewriting without ${FUDGE_*}
+- building of uClibc's 'ldd' variants needs reinstated
+
+
+2010-03-04
+==========
+
+* uland-misc uClibc (0.9.28.3)
+- reinstate compiler and test it ... wants stdlib.h/unistd.h
+
+
+2010-02-19
+==========
+
+* uland-misc gcc2
+- prerequisites: idx-htcmin-gcc2, idx-kspace26-gcc4
+
+[ from cross compiler invoke ]
+# ./toolchain/usr/bin/i386-homebrew-linux-uclibc-gcc  /hw.c -DSIMPLE
+/home/tcng-0219/toolchain/usr/i386-homebrew-linux-gnu/bin/ld: cannot find lib/uclibc_nonshared.a
+
+
+2010-01-29
+==========
+
+* 'uland-misc'
+- done: lxincl (2.6)
+- need: lxincl (other)
+- done: uClibc
+- need: compiler (gcc2)
+- need: compiler (gcc4)
+
+* kernel headers - detail
+- DONE: v2.0 extraction
+- TODO: v2.0 configuration needs 'bash'
+- TODO: v2.0 build
+- TODO: v2.0 install (incl. .config)
+* 'uland' compilers - need 2.2.x kernel headers
+- DONE: v2.2 extraction
+- TODO: v2.2 configuration needs 'bash'
+- TODO: v2.2 build
+- TODO: v2.2 install (incl. .config)
+* 'uland' compilers - need 2.4.x kernel headers
+- DONE: v2.4 extraction
+- TODO: v2.4 configuration needs 'bash'
+- TODO: v2.4 build
+- TODO: v2.4 install (incl. .config)
+* 'uland' compilers - 2.6.x kernel headers DONE
+
+
+* misc TODO
+- check /usr/bin/gcc use in everything
+- 'minimal' vs 'homebrew' builds?? cross kernel asks for minimal
+- CTI_KGCC_BUILT is '...libiberty.a' but notes say it doesn't build!!
+
+
+2009-12-24
+==========
+
+* sw-resc environment issues
+- useful-but-missing: 'bzip2',
+- useful-but-missing: 'tee', 'which'
+- no linux/errno.h for bzip2 (kernel source needed in /usr/src/linux)
+
+* tcdev environment issues
+- no '.' support in lching busybox vi (v0.9.6)
+- lx2.4 configure: possible mkdep.c issues with PATH_MAX
+- build issues with busybox (-> fails as 'coreutils' replacement)
+
+
+2009-12-08
+==========
+
+* missing features
+- don't rebuild installed packages ... unless 'FORCE'd to
+- no cleaning 'exttemp' subdirs after build
