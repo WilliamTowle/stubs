@@ -79,11 +79,10 @@ ${NTI_GCC_CONFIGURED}:
 		  MAKEINFO=/bin/false CFLAGS='-O2' \
 			../configure -v \
 			  --prefix=${TCTREE}'/usr/' \
-			  --host=${HOSTSPEC} \
-			  --build=${HOSTSPEC} \
+			  --host=${HOSTSPEC} --build=${HOSTSPEC} \
 			  --target=${HOSTSPEC} \
                           --with-sysroot=/ \
-                          --with-local-prefix=${TCTREE}'/usr' \
+                          --with-local-prefix=${TCTREE}'/usr/' \
                           --enable-languages=c \
                           --disable-nls --disable-werror \
                           --disable-libmudflap \

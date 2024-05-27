@@ -1,3 +1,23 @@
+2018-03-29
+==========
+
+* uClibc config:
+- Python (v3.3.4) wants I_PUSH symbol
+	...usually in <sys/stropts.h> but no "STREAMS" support in uClibc
+- Perl 5.22.0 builds:
+	...at "Checking for GNU C Library" -> "Maybe this is a Cray"
+	...issue with nm and libc.o
+- rxvt?
+	...also wanted I_PUSH symbol according to related notes
+
+* NEW: tcbase-180328.conf
+-> DONE: introduce suitable binutils/gcc build config
+-> DONE: fix 'cfns' build - with patch
+-> TODO: "recipe for target 'libgcc_s.so' failed" - unrecognized relocation
+	...with both binutils 2.22 and 2.25.1 :(
+-> TODO: want to see an additional package build (eg. 'make' for toolchain?)
+
+
 2018-03-24
 ==========
 

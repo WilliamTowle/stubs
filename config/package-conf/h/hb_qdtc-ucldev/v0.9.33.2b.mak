@@ -21,12 +21,12 @@ CTI_UCLDEV_INSTALLED	= ${TCTREE}/etc/config-uClibc-${PKGVER}
 # Critical observations regarding v0.9.33.2 configuration to date:
 # - MALLOC_GLIBC_COMPAT stops 'configure's introducing dependencies on gnulib
 # - UCLIBC_HAS_GNU_GLOB required by 'make'
+# - UCLIBC_HAS_THREADS generally useful
 # - LINUXTHREADS_NEW, HAS_THREADS_NATIVE: gcc --enable-threads required by pixman
 # - UCLIBC_SUSV3_LEGACY provides mktemp (busybox coreutils)
 # - UCLIBC_HAS_FLOAT + DO_C99_MATH + UCLIBC_HAS_LONG_DOUBLE_MATH for gcc
 # [Continues: a minimal build option might be possible without the following]
 # - UCLIBC_HAS_SSP required by perl
-# - UCLIBC_HAS_THREADS generally useful
 # - WCHAR lack prompts mblen, mbtowc, mbstowcs, wctomb link error in libXpm
 # - UCLIBC_HAS_LOCALE useful? or dubious dependency? Needs support on host?
 # - testing UCLIBC_HAS_RESOLVER_SUPPORT, required by openssh
@@ -51,7 +51,7 @@ ${CTI_UCLDEV_CONFIGURED}:
 		 echo 'RUNTIME_PREFIX="/"' ;\
 		 echo 'WARNINGS=""' ;\
 		 \
-		 echo 'MALLOC_GLIBC_COMPAT=y' ;\
+		 echo	'MALLOC_GLIBC_COMPAT=y' ;\
 		 echo	'UCLIBC_HAS_GNU_GLOB=y' ;\
 		 echo	'UCLIBC_HAS_FLOAT=y' ;\
 		 echo		'DO_C99_MATH=y' ;\
