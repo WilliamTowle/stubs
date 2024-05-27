@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 # 29/11/2005
 
 [ "${SYSCONF}" ] && . ${SYSCONF}

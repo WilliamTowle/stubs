@@ -1,0 +1,102 @@
+## "Sencha"
+## Since 2008-04-24 (sencha-0.9.5, auth WmT)
+#	autoconf -> 2.63
+#	bash -> 3.2-lfs8
+#	eg-tc-init -> 0.8.0-2-eg1b
+#	findutils -> 4.2.33-sb1a
+#	grep -> 2.5.3
+#	m4 -> 1.4.12
+#	mawk -> 1.3.3-eg1c
+#	nasm -> 2.04rc1
+## Last modified 2008-10-19
+
+#eg-tc-init		0.8.0		HOST
+eg-tc-init		0.8.0-2-eg1b	HOST
+
+
+## ...native-build dependencies
+## -------------------------------------------------
+## PACKAGE		# VERSION	# HOST/CROSS
+
+sed			4.1.5-eg2b	HOST
+#findutils		4.2.29-eg2a	HOST
+findutils		4.2.33-sb1a	HOST
+
+#flex			2.5.27-fr1a	HOST
+flex			2.5.27-fr1b	HOST
+m4			1.4.12		HOST
+bison			1.875e-fr1a	HOST
+#bison			2.3		HOST
+#coreutils		5.2.1-eg2e	HOST
+coreutils		5.93-eg1c	HOST
+#coreutils		5.97		HOST
+# Needed for willow? Where?
+#sh-utils		2.0-2b		HOST
+#sh-utils		2.0.15-eg1b	HOST
+#? fileutils		4.1-2b
+#? textutils		2.1-eg2c
+
+diffutils		2.8.1-fr1b	HOST
+#diffutils		2.8.7-alpha-1b	HOST
+patch			2.5.4-eg2a	HOST
+
+mawk			1.3.3-eg1c	HOST
+make			3.81-eg2a	HOST
+
+
+## ...native build config
+## -------------------------------------------------
+## PACKAGE		# VERSION	# HOST/CROSS
+
+#sanitc-host-binutils	2.16.1		HOST
+sanitc-host-binutils	2.16.1-eg2a	HOST
+#sanitc-host-gcc		2.95.3-2-fr1a	HOST
+sanitc-host-gcc		2.95.3-2-sb1c	HOST
+
+#bash			2.05b-fr1a	HOST
+bash			3.2-lfs8	HOST
+grep			2.5.3		HOST
+which			2.16-fr1b	HOST
+
+
+## ...for cross compilation and package building
+## -------------------------------------------------
+## PACKAGE		# VERSION	# HOST/CROSS
+
+autoconf		2.63		HOST
+# binutils >= 2.17 will not build the 2.2.x kernel
+sanitc-cross-binutils	2.16.1-eg2a	HOST
+sanitc-minimal-gcc	2.95.3-2-sb2a	HOST
+sanitc-lx-headers	2.2.26-sb2b	HOST
+#sanitc-lx-source	2.2.26		HOST
+sanitc-uClibc-dev	0.9.26-sb1c	HOST
+sanitc-cross-gcc	2.95.3-2-sb1c	HOST
+
+#sanitc-kgcc		2.7.2.3		HOST
+#bin86			0.16.0-eg1b	HOST
+bin86			0.16.17-eg1c	HOST
+sanitc-kernel		2.2.26-sb2b	CROSS
+
+
+## ...for CD/floppy/package builds, etc
+## -------------------------------------------------
+## PACKAGE		# VERSION	# HOST/CROSS
+
+bzip2			1.0.5		HOST
+#tar			1.13-eg2a	HOST
+tar			1.20		HOST
+#gzip			1.2.4b-fr1b	HOST
+gzip			1.3.12		HOST
+
+perl			5.10.0		HOST
+#nasm			0.98.39		HOST
+nasm			2.04rc1		HOST
+
+# syslinux needs mtools
+mtools			3.9.9-eg2d	HOST
+syslinux		2.13-eg1d	HOST
+#syslinux		3.11			HOST
+#cdrtools		2.01-eg1b	HOST
+cdrtools		2.01.01a11	HOST
+memtest86		3.3-eg1b	HOST
+#memtest86+		1.65		HOST

@@ -1,0 +1,98 @@
+## "Earl Grey"
+## Since 2008-04-24 (freg-0.9.5-2pre2, auth WmT)
+#	syslinux -> 2.13-eg1e
+## Last modified 2008-10-11
+
+## ...for native builds
+## -------------------------------------------------
+## PACKAGE		# VERSION	# HOST/CROSS
+
+#eg-tc-init		0.6.0		HOST
+#eg-tc-init		0.8.0		HOST
+eg-tc-init		0.8.0-2		HOST
+
+m4			1.4.11		HOST
+#flex			2.5.27-fr1b	HOST
+flex			2.5.33		HOST
+#bison			1.875e-fr1a	HOST
+bison			2.3		HOST
+#coreutils		5.2.1-eg2e	HOST
+coreutils		5.93-eg1c	HOST
+#coreutils		5.97		HOST
+
+# Needed for willow? Where?
+#sh-utils		2.0-2b		HOST
+#sh-utils		2.0.15-eg1b	HOST
+#? fileutils		?
+#? textutils		2.1-eg2c
+
+#diffutils		2.8.1-eg2f	HOST
+diffutils		2.8.1-fr1b	HOST
+#diffutils		2.8.7-alpha-1b	HOST
+mawk			1.3.3-fr1b	HOST
+
+# later binutils broken on Ubuntu!
+#sanitc-host-binutils	2.17-fr1a	HOST
+sanitc-host-binutils	2.16.1-eg1a	HOST
+sanitc-host-gcc		2.95.3-2-eg1a	HOST
+#sanitc-host-gcc		2.95.3-2-fr1a	HOST
+
+findutils		4.2.33		HOST
+
+## ...for cross compilation and package building
+## -------------------------------------------------
+## PACKAGE		# VERSION	# HOST/CROSS
+
+# recent (to -sb1d) binutils versions broken on Ubuntu! :(
+#sanitc-cross-binutils	2.17-sb1d	HOST
+sanitc-cross-binutils	2.16.1-eg1a	HOST
+#sanitc-minimal-gcc	2.95.3		HOST
+sanitc-minimal-gcc	2.95.3-2-eg1a	HOST
+#sanitc-minimal-gcc	2.95.3-2-sb1c	HOST
+#sanitc-lx-headers	2.0.40-eg1b	HOST
+sanitc-lx-headers	2.0.40-eg2a	HOST
+uClibc			0.9.20-eg2j	HOST
+#uClibc			0.9.20-eg2k	HOST
+
+#sanitc-kgcc		2.7.2.3		HOST
+sanitc-kgcc		2.7.2.3-fr1a	HOST
+#bin86			0.16.0-eg1b	HOST
+bin86			0.16.17-eg1c	HOST
+#sanitc-kernel		2.0.40-eg1a	HOST
+sanitc-kernel		2.0.40-eg2a	HOST
+
+sed			4.1.5-eg2b	HOST
+grep			2.5.1a-fr1c	HOST
+make			3.81-eg2a	HOST
+which			2.16-fr1b	HOST
+
+## ...for CD/floppy/package builds, etc
+## -------------------------------------------------
+## PACKAGE		# VERSION	# HOST/CROSS
+
+#patch			2.5.4-fr1b	HOST
+patch			2.5.4-eg2a	HOST
+#tar			1.13-eg2a	HOST
+tar			1.19		HOST
+#gzip			1.2.4b-fr1b	HOST
+gzip			1.3.12		HOST
+#bzip2			1.0.4-eg2a	HOST
+bzip2			1.0.5		HOST
+
+#perl			5.8.8		HOST
+perl			5.10.0		HOST
+# nasm -- pao chung needs <2.00 for SDL 1.2.9
+nasm			0.98.39		HOST
+#nasm			0.99.06		HOST
+#nasm			2.00		HOST
+#bash			2.05b-fr1a	HOST
+bash			3.2pl5		HOST
+
+# syslinux needs mtools
+mtools			3.9.9-eg2d	HOST
+syslinux		2.13-eg1e	HOST
+#syslinux		3.62			HOST
+cdrtools		2.01-eg1b	HOST
+#cdrtools		2.01.01a37	HOST
+memtest86		3.3-eg1b	HOST
+#memtest86+		1.65		HOST

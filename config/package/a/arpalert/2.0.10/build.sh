@@ -1,5 +1,5 @@
-#!/bin/sh
-# 26/11/2006
+#!/bin/sh -x
+# 2006-11-26
 
 [ "${SYSCONF}" ] && . ${SYSCONF}
 [ "${PKGFILE}" ] && . ${PKGFILE}

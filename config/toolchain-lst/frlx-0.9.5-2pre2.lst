@@ -1,7 +1,5 @@
 ## "Franki" extension-set
 ## Since 2008-04-24 (frlx-0.9.5, auth WmT)
-#	unzip -> 5.52-fr1c
-## Since 2008-04-24 (frlx-0.9.5-pre1, auth WmT)
 #	autoconf -> 2.63
 ## Last Modified 2008-08-09
 
@@ -20,7 +18,7 @@ bison			2.3		HOST
 bin86			0.16.17-eg1c	HOST
 unzip			5.52-fr1c	HOST
 groff			1.19.1-eg1d	HOST
-util-linux		2.12r-fr1c	HOST
+util-linux		2.12r-eg2b	HOST
 
 gettext-intl		0.17-fr1b	CROSS
 e2fsprogs		1.40.6		CROSS
@@ -39,7 +37,7 @@ ed			0.9-fr1a	HOST
 
 fakeroot		1.5.10ubuntu2	HOST
 file			4.24		HOST
-freetype		2.3.5		CROSS
+freetyp	2.3.5-fr1b	CROSS
 
 bsd-errh		1-fr1b		CROSS
 bzip2			1.0.5		CROSS
@@ -60,7 +58,8 @@ openssl			0.9.7m		CROSS
 
 pcre			7.4		CROSS
 
-readline		5.2-fr1b	CROSS
+#readline		5.2-fr1b	CROSS
+readline		5.2		CROSS
 
 #SDL			1.2.7		CROSS
 #slang			1.4.9-3		CROSS

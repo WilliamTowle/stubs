@@ -1,13 +1,14 @@
 ## "Lung Ching"
 ## Since 2008-04-24 (lching-0.9.5, auth WmT)
-## Last modified 2008-06-22
+#	busybox -> 1.11.3
+## Last modified 2008-09-29
 
 ## ...for native builds and testing
 ## -------------------------------------------------
 ## PACKAGE		# VERSION	# PREFIX?
 
 #busybox			1.9.2
-busybox			1.10.0
+busybox			1.11.3
 #bzip2			1.0.4-eg2a	MINIMAL
 bzip2			1.0.5		MINIMAL
 #...meaningless if no UMDOS support in kernel:

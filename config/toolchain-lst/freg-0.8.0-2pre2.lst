@@ -1,5 +1,6 @@
 ## "Earl Grey"
 ## Since 2008-04-24 (freg-0.9.5rc2, auth WmT)
+#	eg-tc-init -> 0.8.0-2
 ## Last modified 2008-04-24
 
 ## ...for native builds
@@ -7,7 +8,8 @@
 ## PACKAGE		# VERSION	# HOST/CROSS
 
 #eg-tc-init		0.6.0		HOST
-eg-tc-init		0.8.0		HOST
+#eg-tc-init		0.8.0		HOST
+eg-tc-init		0.8.0-2		HOST
 
 m4			1.4.11		HOST
 #flex			2.5.27-fr1b	HOST
