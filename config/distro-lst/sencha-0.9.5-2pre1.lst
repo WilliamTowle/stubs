@@ -1,0 +1,36 @@
+## "Sencha"
+## Since 2008-04-24 (sencha-0.9.5, auth WmT)
+## Last modified 2008-06-22
+
+## ...for native builds and testing
+## -------------------------------------------------
+## PACKAGE		# VERSION	# PREFIX?
+
+#busybox			1.1.0-sb1d
+busybox			1.1.0-sb1e
+bzip2			1.0.5		MINIMAL
+dosfstools		2.11
+eg-init			0.9.0-2b
+eg-progs		0.9.1
+gzip			1.3.12		MINIMAL
+#ld.so			1.9.11-fr1a
+sed			4.1.5-eg2b
+#minised		1.11
+#tar			1.13-eg2a	MINIMAL
+tar			1.20		MINIMAL
+sanitc-uClibc-rt	0.9.26-sb1c
+#...need C++ compiler for umsdos_progs
+#umsdos_progs		1.32-fr1a
+util-linux		2.12r-eg1d	MINIMAL
+
+#
+#
+
+sanitc-uClibc-dev	0.9.26-sb1c
+sanitc-lx-headers	2.2.26-sb2a
+#sanitc-host-binutils	2.16.1
+sanitc-host-binutils	2.16.1-eg2a
+sanitc-host-gcc		2.95.3-2-sb1c
+ncurses			5.6-eg2a
+findutils		4.2.29-eg2a
+patch			2.5.4-eg2a

@@ -33,7 +33,7 @@ make_dc()
 	case ${PKGVER} in
 	1.6.3)
 		if [ ! -r ${FR_LIBCDIR}/lib/libintl.a ] ; then
-			echo "$0: CONFIGURE: No 'gettext' built" 1>&2
+			echo "$0: CONFIGURE: No 'gettext-intl' built" 1>&2
 			exit 1
 		fi
 

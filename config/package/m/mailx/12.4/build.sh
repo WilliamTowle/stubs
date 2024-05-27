@@ -1,5 +1,4 @@
-#!/bin/sh
-# 07/12/2005
+# 13/01/2007
 
 [ "${SYSCONF}" ] && . ${SYSCONF}
 [ "${PKGFILE}" ] && . ${PKGFILE}
@@ -11,7 +10,7 @@ make_dc()
 		# Ah, sanity! 2005-11-11 onward
 		PHASE=dc . ${TCTREE}/opt/freglx/bin/detect-config || exit 1
 	else
-#		echo "$0: configure: configuration not determined" 1>&2
+#		echo "$0: CONFIGURE: Configuration not determined" 1>&2
 		if [ -d ${TCTREE}/cross-utils ] ; then
 			FR_TC_ROOT=${TCTREE}/cross-utils
 			FR_TH_ROOT=${TCTREE}/host-utils
@@ -30,42 +29,50 @@ make_dc()
 		FR_CROSS_CC=${FR_LIBCDIR}/bin/${TARGET_CPU}-uclibc-gcc
 	fi
 
-	PATH=${FR_LIBCDIR}/bin:${PATH} \
-	  CC=${FR_CROSS_CC} \
-		./configure --prefix=/usr \
-		  --host=`uname -m` --build=${TARGET_CPU} \
-		  --disable-largefile --disable-nls \
-		  || exit 1
+	if [ ! -r ${FR_LIBCDIR}/lib/libssl.so.0 ] ; then
+		echo "No libssl [openssl] build" 1>&2
+		exit 1
+	fi
 
-#	[ -r config.h.OLD ] || mv config.h config.h.OLD || exit 1
-#	cat config.h.OLD \
-#		| sed '/define realloc/	s%^%/* %' \
-#		| sed '/define realloc/	s%$% */%' \
-#		> config.h || exit 1
+	# ./configure ditched as of v10.8
+	CC=${FR_HOST_CC} \
+		sh makeconfig || exit 1
 
-	[ -r Makefile.OLD ] || mv Makefile Makefile.OLD || exit 1
-	cat Makefile.OLD \
-		| sed '/^CC *=/	s%g*cc%'${FR_CROSS_CC}'%' \
-		> Makefile || exit 1
+	for MF in `find ./ -name Makefile` ; do
+		[ -r ${MF}.OLD ] || mv ${MF} ${MF}.OLD || exit 1
+		cat ${MF}.OLD \
+			| sed '/^#*CFLAGS/ s/^#*//' \
+			| sed '/^UCBINSTALL/ s%=.*%='${FR_TH_ROOT}'/bin/install%' \
+			> ${MF} || exit 1
+	done
+
+	mv config.h config.h.OLD || exit 1
+	cat config.h.OLD \
+		| sed '/define HAVE_ICONV/ s/define/undef/' \
+		| sed '/define HAVE_MREMAP/ s/define/undef/' \
+		| sed '/define HAVE_SETLOCALE/ s/define/undef/' \
+		| sed '/define HAVE_WCTYPE_H/ s/define/undef/' \
+		| sed '/define HAVE_WCWIDTH/ s/define/undef/' \
+		| sed '/define HAVE_WORDEXP/ s/define/undef/' \
+		> config.h || exit 1
 
 # BUILD...
-	PATH=${FR_LIBCDIR}/bin:${PATH} \
-		make || exit 1
+	make CC=${FR_CROSS_CC} \
+	  all || exit 1
 
 # INSTALL...
-	mkdir -p ${INSTTEMP}/usr/local/bin || exit 1
 	make DESTDIR=${INSTTEMP} install || exit 1
 }
 
 case "$1" in
 distro-cross)
 	make_dc || exit 1
-	;;
+;;
 #toolchain-host)
 #	INSTTEMP=${TCTREE} make_th || exit 1
-#	;;
+#;;
 *)
 	echo "$0: Unexpected ARG '$1'" 1>&2
 	exit 1
-	;;
+;;
 esac

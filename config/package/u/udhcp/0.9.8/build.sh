@@ -12,10 +12,13 @@ do_configure()
 		| sed '/^LD[ 	]*/	s%=.*%= '${FR_CROSS_CC}'%' \
 		| sed '/^#COMBINED_BINARY/ s/#//' \
 		| sed 's%^SBINDIR=.*%SBINDIR=${prefix}/sbin%' \
-		| sed 's%$(USRBINDIR)%${DESTDIR}/$(USRBINDIR)%' \
-		| sed 's%$(USRSBINDIR)%${DESTDIR}/$(USRSBINDIR)%' \
-		| sed 's%$(USRSHAREDIR)%${DESTDIR}/$(USRSHAREDIR)%' \
-		| sed 's%$(SBINDIR)%${DESTDIR}/$(SBINDIR)%' \
+		| sed '/(INSTALL)/	s%$(USRBINDIR)%${DESTDIR}/$(USRBINDIR)%' \
+		| sed '/(INSTALL)/	s%$(USRSBINDIR)%${DESTDIR}/$(USRSBINDIR)%' \
+		| sed '/(INSTALL)/	s%$(USRSHAREDIR)%${DESTDIR}/$(USRSHAREDIR)%' \
+		| sed '/(INSTALL)/	s%$(SBINDIR)%${DESTDIR}/$(SBINDIR)%' \
+		| sed '/ln -sf/		s%$(SBINDIR)%${DESTDIR}/$(SBINDIR)%' \
+		| sed '/^		/	s%$(USRSHAREDIR)%${DESTDIR}/$(USRSHAREDIR)%' \
+		| sed '/mkdir/		s%$(USRSHAREDIR)%${DESTDIR}/$(USRSHAREDIR)%' \
 		> Makefile || exit 1
 
 	case ${PHASE}-${FR_TARGET_DEFN} in
