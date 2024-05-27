@@ -1,0 +1,143 @@
+#!/bin/sh
+##	status		(c)1999-2006 William Towle
+##	Last modified	12/07/2006, WmT
+##	Purpose		configuration management
+#
+#   Open Source software - copyright and GPLv2 apply. Briefly:
+#	- No warranty/guarantee of fitness, use is at own risk
+#	- No restrictions on strictly-private use/copying/modification
+#	- This license must apply also to all modified/derived works
+#	- Redistributing? Include/offer to deliver original source
+#   Philosophy/full details at http://www.gnu.org/copyleft/gpl.html
+
+BINDIR=`dirname $0`
+
+# record of current scripts setting:
+VERSIONFILE=${BINDIR}/.current
+
+# SCONFIGURE is for 'mk2' style scripts, PCONFIGURE for STUBS-style
+SCONFIGURE=${BINDIR}/stages-configure
+PCONFIGURE=${BINDIR}/profile-configure
+
+effect_slinks()
+{
+	PREFIX=$1
+	ls -d1 ${PREFIX}/${STUBSDIR}/* 2>/dev/null | while read CANDIDATE ; do
+		case ${MODE} in
+		validate)
+			TARGET=`basename ${CANDIDATE}`
+			if [ ! -L ${CANDIDATE} -a -r ${TARGET} -a ! -L ${TARGET} ] ; then
+				echo "$0: non-symlink ${TARGET} would be overwritten. Aborting" 1>&2
+				exit 1
+			fi
+		;;
+		create)
+			ls -d1 ${PREFIX}/${STUBSDIR}/* 2>/dev/null | while read CANDIDATE ; do
+				[ ! -f ${CANDIDATE} ] || ln -sf ${CANDIDATE} ./
+				[ ! -d ${CANDIDATE} ] || ln -sf ${CANDIDATE} ./
+			done
+		;;
+		esac
+	done
+	#true
+}
+
+do_setver()
+{
+	STUBSDIR=$1
+
+	if [ -z "${STUBSDIR}" ] ; then
+		echo "Need STUBSDIR"
+		exit 1
+	elif [ ! -d ${STUBSDIR} ] ; then
+		echo "STUBSDIR ${STUBSDIR} not a directory"
+		exit 1
+	else
+		( cd ${BINDIR} || exit 1
+			case ${BINDIR} in
+			.)	MODE=validate effect_slinks ./ ;;
+			*)	MODE=validate effect_slinks ../ ;;
+			esac
+		) || exit 1
+
+		ls -d1 ${BINDIR}/* | while read CANDIDATE ; do
+			[ -L ${CANDIDATE} ] && rm ${CANDIDATE}
+		done
+
+		( cd ${BINDIR} || exit 1
+			case ${BINDIR} in
+			.)	MODE=create effect_slinks ./ ;;
+			*)	MODE=create effect_slinks ../ ;;
+			esac
+		) || exit 1
+		echo `basename ${STUBSDIR}` > ${VERSIONFILE}
+		echo "...OK"
+	fi
+}
+
+do_profile_configure()
+{
+	PCONFIGURE=${BINDIR}/profile-configure
+	if [ ! -r ${PCONFIGURE} ] ; then
+		echo "$0: Confused -- No ${PCONFIGURE}" 1>&2
+		exit 1
+	else
+		${PCONFIGURE} $*
+	fi
+}
+
+do_stages_configure()
+{
+	if [ ! -r ${SCONFIGURE} ] ; then
+		echo "$0: Confused -- No ${SCONFIGURE}" 1>&2
+		exit 1
+	else
+		${SCONFIGURE} $*
+	fi
+}
+
+do_show()
+{
+	if [ ! -r ${VERSIONFILE} ] ; then
+		echo "$0: ERROR: Current scripts version unknown." 1>&2
+		echo "$0: HELP: '$0 setver' is required" 1>&2
+		exit 1
+	else
+		echo "[$0: Scripts version: `cat ${VERSIONFILE}`]"
+	fi
+
+	if [ -x ${SCONFIGURE} ] ; then
+		${SCONFIGURE} summary
+	elif [ -x ${PCONFIGURE} ] ; then
+		${PCONFIGURE} show
+	else
+		echo "$0: do_show() confused -- don't know how to delegate request" 1>&2
+		exit 1
+	fi
+}
+
+ACTION=$1
+[ "$1" ] && shift
+case ${ACTION} in
+setver)	## set scripts version	[STUBS/NG]
+	do_setver $*
+;;
+show)	## display settings	[STUBS/NG]
+	do_show $*
+;;
+edit)	## display settings	[STUBS]
+	do_profile_configure edit $*
+;;
+#tempdir, stage-type, target-cpu
+sourcetree|stages|stage-config)	## [NG]
+	do_stages_configure ${ACTION} $*
+;;
+*)
+	if [ -n "${ACTION}" -a "${ACTION}" != 'help' ] ; then
+		echo "$0: Unrecognised command '${ACTION}'"
+	fi
+	echo "$0: Usage:"
+	grep "^[0-9a-z][0-9a-z|-]*)" $0 | sed "s/^/	/"
+	exit 1
+;;
+esac

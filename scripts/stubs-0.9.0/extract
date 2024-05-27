@@ -1,0 +1,147 @@
+#!/bin/sh
+##	extract		(c)1999-2006 William Towle
+##	Last modified	24/09/2006, WmT
+##	Purpose		Script extraction
+#
+#   Open Source software - copyright and GPLv2 apply. Briefly:
+#	- No warranty/guarantee of fitness, use is at own risk
+#	- No restrictions on strictly-private use/copying/modification
+#	- No re-licensing this work under more restrictive terms
+#	- Redistributing? Include/offer to deliver original source
+#   Philosophy/full details at http://www.gnu.org/copyleft/gpl.html
+
+
+BINDIR=`dirname $0`
+#. ${BINDIR}/scripts.cfg || exit 1
+. ${BINDIR}/lib/script-config || exit 1
+
+handle_extract()
+{
+	SRCFILE=$1
+	shift
+	DIRECTORY=$1
+	shift
+
+	if [ ! -r ${SRCFILE} ] ; then
+		echo "$0: SRCFILE ${SRCFILE} (from SRCURL ${SRCURL}) not readable" 1>&2
+		exit 1
+	fi
+
+	DID_EXTRACT=n
+	case ${SRCFILE} in
+	*.tar.gz|*.tgz)
+		echo "- ${SRCFILE}"
+		zcat ${SRCFILE} | ( cd ${DIRECTORY} && tar xvf - ) || exit 1
+		DID_EXTRACT=y
+	;;
+	*.tar.bz2|*.tbz|*.tbz2)
+		echo "- ${SRCFILE}"
+		bzcat ${SRCFILE} | ( cd ${DIRECTORY} && tar xvf - ) || exit 1
+		DID_EXTRACT=y
+	;;
+	*patch)
+		#cat ${SRCFILE} | ( cd ${DIRECTORY} && patch -p1 -i - ) || exit 1
+		cp ${SRCFILE} ${DIRECTORY} || exit 1
+	;;
+	*)	# any patch/diff/miscellaneous file type
+		# compressed or otherwise
+		cp ${SRCFILE} ${DIRECTORY} || exit 1
+ 	;;
+	esac
+
+	if [ "${DID_EXTRACT}" = 'y' ] ; then
+		if [ "${SRCXPATH}" != '.' ] ; then
+			# move to right place (via dotfile)
+			mkdir ${DIRECTORY}/.tmp.$$
+			mv ${DIRECTORY}/${SRCXPATH}/* ${DIRECTORY}/.tmp.$$ || exit 1
+			rm -rf ${DIRECTORY}/*
+			# move directory contents (consider absence of dot files)
+			mv ${DIRECTORY}/.tmp.$$/* ${DIRECTORY} || exit 1
+			mv ${DIRECTORY}/.tmp.$$/.[0-9A-Za-z]* ${DIRECTORY} 2>/dev/null
+			rmdir ${DIRECTORY}/.tmp.$$
+		fi || exit 1
+	fi || exit 1
+}
+
+do_extract()
+{
+	PKGDIR=$1
+	if [ -z "${PKGDIR}" ] ; then
+		echo "$0: Expected PKGDIR" 1>&2
+		exit 1
+	elif [ ! -r ${PKGDIR} ] ; then
+		echo "$0: ${PKGDIR}: Not found" 1>&2
+		exit 1
+	else
+		shift
+	fi
+
+	EXTDIR=$1
+	if [ -z "${EXTDIR}" ] ; then
+		echo "$0: Expected EXTDIR" 1>&2
+		exit 1
+	else
+		shift
+	fi
+
+	SUCCESS=y
+	. config/stubs.cfg || exit 1
+
+	# ...create and populate target directory
+	mkdir -p ${EXTDIR}/source || exit 1
+	BUILDFILE=${PKGDIR}/build.sh
+	cp ${BUILDFILE} ${EXTDIR}/build.sh || exit 1
+	CFGFILE=${PKGDIR}/package.cfg
+	cp ${CFGFILE} ${EXTDIR}/package.cfg || exit 1
+
+	. ${CFGFILE} || exit 1
+	if [ "${PKGREV}" ] ; then
+		echo "$0: PKGNAME ${PKGNAME}, VER ${PKGVER} (REV '${PKGREV}')"
+	else
+		echo "$0: PKGNAME ${PKGNAME}, VER ${PKGVER}"
+	fi
+	TEMPCFG=${EXTDIR}/tmp.$$
+	grep '^SRCDEP[0-9]*=' ${CFGFILE} | while read SRCSPEC ; do
+		cp ${CFGFILE} ${TEMPCFG} || exit 1
+		echo ${SRCSPEC} | sed 's/[0-9]*=/=/' >> ${TEMPCFG}
+
+		. ${TEMPCFG} || exit 1
+		set -- ${SRCDEP}
+		SRCPATH=$1
+		SRCURL=$2
+		case ${SRCURL} in
+		*gz?*|*bz2?*)
+			SRCFILE=${SOURCE_DIR}/${SRCPATH}/`basename ${SRCURL} | sed 's/?[^?]*$//'`
+			;;
+		*?*)
+			SRCFILE=${SOURCE_DIR}/${SRCPATH}/`basename ${SRCURL} | sed 's/.*=//'`
+		;;
+		*)
+			SRCFILE=${SOURCE_DIR}/${SRCPATH}/`basename ${SRCURL}`
+		;;
+		esac
+
+		PATH=${TCTREE}/usr/bin:${PATH} \
+		  handle_extract ${SRCFILE} ${EXTDIR}/source || exit 1
+	done || SUCCESS=n
+	rm ${TEMPCFG}
+	[ "${SUCCESS}" = 'y' ]
+}
+
+do_extract $* || exit 1
+#ACTION=$1
+#[ "${ACTION}" ] && shift
+#case ${ACTION} in
+##toolchain)	## build given PACKAGE in toolchain
+##	build_toolchain $* || exit 1
+##	echo "$0: BUILD phase OK"
+##;;
+#*)
+#	if [ -n "${ACTION}" -a "${ACTION}" != 'help' ] ; then
+#		echo "$0: Unrecognised COMMAND '${ACTION}'" 1>&2
+#	fi
+#	echo "$0: Usage:" 1>&2
+#	grep "^[0-9a-z-]*)" $0 | sed "s/^/	/" 1>&2
+#	exit 1
+#;;
+#esac

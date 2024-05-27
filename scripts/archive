@@ -1,0 +1,59 @@
+#!/bin/sh
+##	archive		(c)1999-2006 William Towle
+##	Last modified	16/10/2005, WmT
+##	Purpose		Generate config/devel/scripts archive
+#
+#   Open Source software - copyright and GPLv2 apply. Briefly:
+#	- No warranty/guarantee of fitness, use is at own risk
+#	- No restrictions on strictly-private use/copying/modification
+#	- This license must apply also to all modified/derived works
+#	- Redistributing? Include/offer to deliver original source
+#   Philosophy/full details at http://www.gnu.org/copyleft/gpl.html
+
+make_config()
+{
+	if [ -z "$1" ] ; then
+		echo "make_config(): expected VERSION"
+		exit 1
+	else
+		VERSION=$1
+		LC_ALL=C
+		tar cvzf stubs-config-${VERSION}.tgz config/[a-z]* FAQ
+		tar cvzf stubs-devel-${VERSION}.tgz config/[A-Z]*
+	fi
+}
+
+make_scripts()
+{
+	for SUBDIR in scripts/stubs* ; do
+		tar cvzf `echo ${SUBDIR} | sed 's/.*stubs/stubs-scripts/'`.tgz ${SUBDIR} scripts/archive scripts/configure
+	done
+}
+
+make_all()
+{
+	make_config $* || exit 1
+	make_scripts || exit 1
+}
+
+ACTION=$1
+[ "$1" ] && shift
+case ${ACTION} in
+all)		## create config and scripts archives
+	make_all $* || exit 1
+;;
+config) 	## create config archives (for given VERSION)
+	make_config $* || exit 1
+;;
+scripts)	## create scripts archives
+	make_scripts || exit 1
+;;
+*)
+	if [ -n "${ACTION}" -a "${ACTION}" != 'help' ] ; then
+		echo "$0: Unrecognised command '${ACTION}'"
+	fi
+	echo "$0: Usage:"
+	grep "^[0-9a-z]*)" $0 | sed "s/^/	/"
+	exit 1
+;;
+esac

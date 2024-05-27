@@ -1,0 +1,221 @@
+#!/bin/sh
+##	egp		(c)1999-2006 William Towle
+##	Last modified	22/10/2006, WmT
+#
+#   Open Source software - copyright and GPLv2 apply. Briefly:
+#	- No warranty/guarantee of fitness, use is at own risk
+#	- No restrictions on strictly-private use/copying/modification
+#	- No re-licensing this work under more restrictive terms
+#	- Redistributing? Include/offer to deliver original source
+#   Philosophy/full details at http://www.gnu.org/copyleft/gpl.html
+
+## freglx 'egp' package installer script
+
+## TODO: communicate PREFIX from files.cfg to 'instmgr'
+
+##
+##	global config
+##
+
+#[ "${TOPLEV}" ] || TOPLEV=`pwd`
+#CFGTREE=${TOPLEV}/config
+[ -z "${TMPDIR}" ] && TMPDIR=/tmp/
+
+##
+##	subroutines
+##
+
+generate_index()
+{
+	DIRECTORY=$1
+	if [ -z "${DIRECTORY}" ] ; then
+		echo "$0: Expected DIRECTORY"
+		exit 1
+	fi
+
+	# NB: busybox's 'find' doesn't understand '-o'...
+	( cd ${DIRECTORY} && \
+		for FILE in `find . -type l ; find . -type f` ; do
+			case ${FILE} in 
+			*/man/*|*/info/*)
+				echo ${FILE} | sed 's%\./%M %'
+			;;
+			*)
+				if [ -L ${INSTTREE}/${FILE} ] ; then
+					echo ${FILE} | sed 's%\./%L %'
+				elif [ -x ${INSTTREE}/${FILE} ] ; then
+					echo ${FILE} | sed 's%\./%X %'
+				else
+					echo ${FILE} | sed 's%\./%F %'
+				fi
+			;;
+			esac
+		done
+	) || exit 1
+}
+
+do_create()
+{
+	if [ -z "$1" ] ; then
+		echo "$0: generate expected OUTFILE"
+		exit 1
+	else
+		OUTFILE=$1
+		shift
+	fi
+
+	if [ -z "$1" ] ; then
+		echo "$0: generate expected INSTTREE"
+		exit 1
+	else
+		INSTTREE=$1
+		shift
+	fi
+
+##	generate metadata
+	PKGMETA=`dirname ${INSTTREE}`/files.cfg
+	grep -v ^PREFIX= `dirname ${INSTTREE}`/package.cfg > ${PKGMETA}
+	echo "PREFIX=${PREFIX}" >> ${PKGMETA}
+
+##	generate index file
+	PKGIDX=`dirname ${INSTTREE}`/files.idx
+	generate_index ${INSTTREE} > ${PKGIDX}
+
+##	generate content file
+	PKGTAR=`dirname ${INSTTREE}`/files.tar
+	( cd ${INSTTREE} && tar cf - * ) > ${PKGTAR}
+
+
+##	generate package file
+	( cd `dirname ${INSTTREE}` && tar cf - files.cfg files.idx files.tar ) | gzip -9 > ${OUTFILE}
+
+	rm ${PKGIDX} ${PKGMETA}
+}
+
+do_install()
+{
+	if [ "${SAFE}" = 'y' ] ; then
+		INSTMGR=`dirname $0`/instmgr.sh
+		if [ ! -x ${INSTMGR} ] ; then
+			echo "$0: No 'instmgr' - can't do safe-mode install" 1>&2
+			exit 1
+		fi
+	fi
+
+	# Usage: DIRECTORY and PACKAGEs arguments
+	DIRECTORY=$1
+	if [ -z "${DIRECTORY}" ] ; then
+		echo "$0 do_install() expected DIRECTORY"
+		exit 1
+	elif [ ! -d "${DIRECTORY}" ] ; then
+		echo "$0 do_install() expected DIRECTORY ${DIRECTORY} to exist"
+		exit 1
+	else
+		shift
+	fi
+	if [ -z "$1" ] ; then
+		echo "$0 do_install() expected PACKAGE[s]"
+		exit 1
+	fi
+
+	for EGP in $* ; do
+		if [ ! -r ${EGP} ] ; then
+			echo "$0: EGP ${EGP} not found"
+			exit 1
+		fi
+
+		## check sane permissions on '${TMPDIR}'
+		echo -n '' > ${TMPDIR}/fail.$$ || exit 1
+		rm ${TMPDIR}/fail.$$
+
+		if [ "${SAFE}" = 'y' ] ; then
+			tar xzOf ${EGP} files.cfg > ${TMPDIR}/cfg.$$
+			if [ ! -r ${TMPDIR}/cfg.$$ ] ; then
+				echo "Cannot do safe-mode install, ${EGP} lacks meta file" 1>&2
+				exit 1
+			fi
+
+			. ${TMPDIR}/cfg.$$ || exit 1
+			rm ${TMPDIR}/cfg.$$
+
+			UNSAFE=n
+			export DBDIR=${DIRECTORY}/opt/freglx/etc
+			${INSTMGR} query ${PKGNAME} && UNSAFE=y
+			if [ "${UNSAFE}" = 'y' ] ; then
+				echo "$0: Aborting install - UNSAFE" 1>&2
+				exit 1
+			fi
+		fi
+
+		[ "${WITH_MANUALS}" ] || WITH_MANUALS=n
+		[ "${WITH_STRIPPING}" ] || WITH_STRIPPING=y
+
+		for TYPE in X L F M ; do
+			if [ "${TYPE}=${WITH_MANUALS}" != "M=n" ] ; then
+#				FILES=`zcat ${EGP} | tar xOf - files.idx | grep "^${TYPE}" | sed 's/^. //' | sed 's/\[/\\\\[/'`
+				FILES=`zcat ${EGP} | tar xOf - files.idx | grep "^${TYPE}" | sed 's/^. //' | sed 's/[[]/\\\\[/g'`
+
+				if [ "${FILES}" ] ; then
+					mkdir ${TMPDIR}/tar.$$
+					zcat ${EGP} | tar xOf - files.tar | ( cd ${TMPDIR}/tar.$$ && tar xf - ${FILES} )
+					if [ "${TYPE}${WITH_STRIPPING}" = 'Xy' ] ; then
+						find ${TMPDIR}/tar.$$ -type f | while read EXTFILE ; do
+# NB:- Need not to strip corrupt files; use 'WHOOPS' to signify.
+# NB: In particular, 'e3' looks corrupt and shouldn't be stripped
+							FILE=`which file 2>/dev/null`
+							if [ "${FILE}" ] ; then
+								OUT=`file ${EXTFILE} 2>/dev/null` || OUT=WHOOPS
+								case ${OUT} in
+								*ELF*) strip ${EXTFILE} ;;
+								esac
+							fi
+						done
+					fi
+					( cd ${TMPDIR}/tar.$$ && find . -type l ; find . -type f ) | tee ${TMPDIR}/tmp.$$ | ( cd ${DIRECTORY} && while read FILE ; do [ -L ${FILE} ] && rm ${FILE} ; done )
+					if [ -s ${TMPDIR}/tmp.$$ ] ; then
+						( cd ${TMPDIR}/tar.$$ && tar cf - * ) | ( cd ${DIRECTORY} && tar xf - )
+					fi
+					rm -rf ${TMPDIR}/tar.$$ ${TMPDIR}/tmp.$$
+				fi
+			fi
+		done
+
+		if [ "${SAFE}" = 'y' ] ; then
+			${INSTMGR} enlist ${PKGNAME} ${PKGVER}
+		fi
+
+	done || exit 1
+}
+
+
+##
+##	main program
+##
+
+ACTION=$1
+[ "$1" ] && shift
+case ${ACTION} in
+create)		## create archive[s] from PACKAGE[s]
+	do_create $* || exit 1
+	echo "$0: CREATE phase OK"
+;;
+install)	## populate DIRECTORY with ARCHIVE[s]
+	do_install $* || exit 1
+	echo "$0: INSTALL phase OK"
+;;
+safe-install)	## safely populate DIRECTORY with ARCHIVE[s]
+	SAFE=y do_install $* || exit 1
+	echo "$0: INSTALL phase OK"
+;;
+index)		## generate INDEX file for DIRECTORY
+	generate_index $* || exit 1
+;;
+*)
+	if [ -n "${ACTION}" -a "${ACTION}" != 'help' ] ; then
+		echo "$0: Unrecognised command '${ACTION}'"
+	fi
+	echo "$0: Usage:"
+	grep "^[0-9a-z-]*)" $0 | sed "s/^/	/"
+	exit 1
+;;
+esac

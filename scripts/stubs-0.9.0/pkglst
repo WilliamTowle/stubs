@@ -1,0 +1,29 @@
+#!/bin/sh
+##	pkglist		(c)1999-2006 William Towle
+##	Last modified	25/07/2005, WmT
+##	Purpose		Extract list of packages in index
+#
+#   Open Source software - copyright and GPLv2 apply. Briefly:
+#	- No warranty/guarantee of fitness, use is at own risk
+#	- No restrictions on strictly-private use/copying/modification
+#	- No re-licensing this work under more restrictive terms
+#	- Redistributing? Include/offer to deliver original source
+#   Philosophy/full details at http://www.gnu.org/copyleft/gpl.html
+
+
+if [ -z "$1" ] ; then
+	echo "$0: No LSTfiles" 1>&2
+	exit 1
+fi
+
+SEPS='[	 ]'
+# NB: GNU and busybox `grep -h` differ - we MUST ALSO sed out filenames
+grep -h ^[A-Za-z0-9] ${*} \
+	| sed 's/^[:]*://' \
+	| sort -u \
+	| sed "s%${SEPS}${SEPS}*%/%" | sed "s/${SEPS}.*//" \
+	| while read FILE ; do
+
+	echo 'config/package/'`echo ${FILE} | cut -c1`"/${FILE}"
+
+done
