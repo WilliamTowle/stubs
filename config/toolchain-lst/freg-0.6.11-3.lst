@@ -1,0 +1,46 @@
+## "Earl Grey"
+## Since 2007-12-02 (freg-0.6.11-2, auth WmT)
+## Last modified 2007-12-16
+
+# --------------------------------------------------
+# PACKAGE		# VERSION	# HOST/CROSS
+
+make			3.81		HOST
+sed			4.1.5		HOST
+diffutils		2.8.1-fr1b	HOST
+patch			2.5.4-fr1b	HOST
+linux2.0source		2.0.40-2e	HOST
+
+fileutils		4.1-2b		HOST
+textutils		2.1-eg2c	HOST
+mawk			1.3.3-fr1a	HOST
+sh-utils		2.0-2b		HOST
+findutils		4.2.29		HOST
+which			2.16-fr1b	HOST
+
+grep			2.5.1a-fr1c	HOST
+gzip			1.2.4b-fr1b	HOST
+bzip2			1.0.4		HOST
+tar			1.13-fr1a	HOST
+#tar			1.19		HOST
+#uClibc			0.9.20-2e	HOST
+uClibc			0.9.20-2g	HOST
+
+binutils		2.16.1		HOST
+gcc			2.95.3		HOST
+#gcc			3.3.3		HOST
+target-binutils		2.16.1		HOST
+target-gcc		2.7.2.3-2c	HOST
+target-kernel		2.0.40-3b	HOST
+#target-kernel		2.0.40-4	HOST
+perl			5.8.8		HOST
+nasm			0.98.39		HOST
+
+bash			2.05b-fr1a	HOST
+#bash			3.2pl5		HOST
+syslinux		2.13-fr1a	HOST
+#syslinux		3.20		HOST
+cdrtools		2.01		HOST
+#cdrtools		2.01.01a37	HOST
+memtest86		3.1a		HOST
+#memtest86+		1.65		HOST

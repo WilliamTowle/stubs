@@ -1,0 +1,16 @@
+## "Pao Chung" extension-set
+## Since 2008-04-24 (paoc-0.9.5, auth WmT)
+#	mpg123-SDL -> 1.5.0
+## last modified 2008-08-09
+
+SDL			1.2.9
+svgalib			1.4.3-paoc1c
+svgalib-demos		1.4.3-paoc1b
+
+evilbricks		0.1-paoc1b
+
+mpg123-SDL		1.5.0
+
+seejpeg			1.10
+
+xhyperoid		1.2-paoc1b

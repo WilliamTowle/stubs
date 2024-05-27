@@ -1,0 +1,28 @@
+## "Rou Gui" extension-set
+## Since 2008-09-29 (rougui-0.9.5-2pre2, auth WmT)
+#	pcre -> 7.8
+#	+ncurses -> 5.6
+## Last modified 2008-10-02
+
+util-linux		2.12r-eg2b	HOST
+fakeroot		1.5.10ubuntu2	HOST
+
+##
+
+bsd-errh		1-fr1b		CROSS
+
+#gettext			0.14.6-fr1b	HOST
+gettext-intl		0.17-fr1b	CROSS
+
+#libevent		1.3e		CROSS
+libevent		1.4.4		CROSS
+libpcap			0.9.7		CROSS
+
+ncurses			5.6		CROSS
+
+openssl			0.9.7m		CROSS
+
+pcre			7.4		CROSS
+pcre			7.8		CROSS
+
+zlib			1.2.3-eg1b	CROSS

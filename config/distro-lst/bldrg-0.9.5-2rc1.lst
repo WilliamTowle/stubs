@@ -1,0 +1,75 @@
+## "Black Dragon" extension-set
+## Since 2008-02-24 (bldrg-0.9.5-2pre2, auth WmT)
+#	ncdu -> 1.4
+## Last modified 2008-10-11
+
+asciipacman		0.9.1
+atop			1.13-eg2c
+aumix			2.8-eg2c
+
+bash			2.05b-fr1a
+bash			3.2-lfs8
+bastet			0.41-eg1c
+bsd-games		2.13
+
+cfe			0.12-eg2c
+conspy			1.5
+ctris			0.42
+
+dialog			1.1-20080316
+dpygames		2.0-eg1c
+
+elf			0.5.4p1-eg1e
+elvis			2.2-0-eg3c
+
+frotz			2.43-eg3c
+
+gpm			1.20.1-eg2d
+
+heirloom-doctools	050915
+httping			1.2.4
+
+jaron			2.2
+jpig			1.0
+
+lazyread		2.0-fr1a
+lde			2.6.1-eg1b
+linuXtree		1.2-eg1c
+lynx			2.8.6rel.5
+lynx			2.8.7dev.7
+
+mikmod			3.1.6-fr1a
+
+naim			0.11.8
+#naim			0.11.8.3-2006-05-24-1717
+nap			1.5.3-eg2c
+ncurses			5.6
+ncdu			1.4
+ne			1.43
+#nmee-nibbles		1.2-eg2a
+
+ocd			0.1-eg3c
+openssl			0.9.7m
+othello			0.03
+
+pong_curses		1.5.1
+#popselect		0.31-1c
+procps			3.2.6-eg1a
+#psmisc			21.8-eg1a
+#psmisc			21.9
+purple-nibbles		0.0.4-eg1a
+
+scanmem			0.03
+seatris			0.0.14-eg1a
+shmux			1.0.1
+
+tcping			1.3.4-eg1a
+tcsh			6.15.00
+
+vifm			0.4
+vtgrab			0.1.9-eg2a
+vtwatch			0.2
+
+zlib			1.2.3-eg1b
+zsh			4.2.7
+zsh			4.3.6

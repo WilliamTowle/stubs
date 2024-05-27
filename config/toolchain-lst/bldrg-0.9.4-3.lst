@@ -1,0 +1,28 @@
+## "Black Dragon" extension-set
+## Since 2007-12-02 (bldrg-0.9.4-2, auth WmT)
+#	+ libiconv -> 1.12
+## Last Modified 2007-12-02
+
+#perl			5.8.8		HOST
+#m4			1.4.4-fr1a	HOST
+m4			1.4.8	HOST
+autoconf		2.61a		HOST
+ncurses			5.6		CROSS
+
+automake		1.10		CROSS
+
+dpy			3.1-eg1c	CROSS
+
+jpegsrc			6b		CROSS
+
+libgpm			1.20.1-eg2c	CROSS
+libiconv		1.12		CROSS
+libmikmod		3.1.10-eg2c	CROSS
+
+openssl			0.9.7m		CROSS
+
+pcre			7.4		CROSS
+
+readline		5.2		CROSS
+
+zlib			1.2.3-eg1b	CROSS

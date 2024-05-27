@@ -1,0 +1,11 @@
+## "Pao Chung" extension-set
+## Since 2008-04-24 (paoc-0.9.5-2pre2, auth WmT)
+## Last Modified 2008-10-11
+
+SDL			1.2.9		CROSS
+svgalib			1.4.3-paoc1b	CROSS
+
+util-linux		2.12r-fr1c	HOST
+fakeroot		1.5.10ubuntu2	HOST
+
+jpegsrc			6b		CROSS

@@ -1,0 +1,356 @@
+STUBS and Franki/Earlgrey Linux -- FAQ
+======================================
+
+In this Document
+----------------
+
+	- Description
+	- Requirements
+	- Operational Overview
+	- End Users' Walkthrough
+	- The Build Process Explained
+	- Package Configuration
+	- 'EGP' Packages
+	- Other Questions
+
+
+Description
+-----------
+
+* So What is It?
+
+- I don't know, sir, but I'm /guessing/ it's a white hole ...only
+kidding!! You're here as you're either either interested in STUBS, a
+system to manage compiling components in a multi-package software
+environment, and/or the Earlgrey Linux distribution and its
+derivatives. If so, read on...
+
+* STUBS?
+
+- The STUBS Toolchain and Utility Build Suite is a set of scripts and
+configuration files for compiling distinct software packages, and
+possibly making a "toolchain" out of several of these - it is an
+essential part of the build process of Earlgrey linux, for example.
+
+  Because STUBS works in either single-package or batch mode (via an
+index file), it is fairly straightforward by design to self-tailor
+what exactly gets built. STUBS is designed to work equally well in a
+minimally-populated environment or one with everything necessary
+installed, and therefore uses distinct "toolchain" and "distro" build
+modes to do the respective jobs.
+
+* Earlgrey Linux?
+
+- Earlgrey ("not everyone's cup of tea") Linux is a minimalist linux
+distribution built entirely from source, and exists primarily as a
+proof-of-concept for the STUBS suite: it is a set of base packages
+to which development tools can be added, and has a limited ability
+to reinstall itself.
+  In addition to the toolchain and distribution configurations for
+Earlgrey, there are others which provide various extension packages
+such as games and system recovery utilities. These go under the
+umbrella "Franki Linux" (named after Franki and Frankii, a pair of
+donation-stream 386 boxes I own). In theory, these packages should
+just work on any other distribution with an equivalent C library and
+so on.
+
+* Licensing?
+
+- STUBS, Earlgrey Linux, and the other distributions specified in
+STUBS' configuration files are licensed under GNU's "GPL" free
+software license. Essentially, you can use this software modified or
+unmodified for any purpose, however, you must offer the GPL's
+freedoms along with the original sources if you redistribute it. In
+this case, what you generate with STUBS is "derivative work", and
+this does not automatically apply to the derivative work - but it
+would be nice for the world at large if you chose that it should.
+
+  As with all GPL software, the standard disclaimers naturally apply.
+All constructive feedback is welcome (if you've made sure you've
+tried reading the most recent version of the documentation of
+course).
+
+* Will I Now Have Everything?
+
+- No, probably not. STUBS hasn't come packaged with all the sources
+for all the configuration files, since you may not want to build
+every package for which a configuration file exists (and almost
+certainly not every version of every package if you do).
+  For this reason, there is a script included which checks for local
+copies of the relevant sources and downloads any which you don't
+have. There are also ways of making sure that all the sources are
+still available, even if you already have them.
+
+* What Gets Downloaded Exactly?
+
+- If you intend to build the toolchain, this list will include a
+compiler for any missing utilities on the host, and a cross-compiler
+if the host and target platforms are different. There may be other
+utlities, such as syslinux for the creation of boot floppies/CDs. If
+you intend to build the Earlgrey linux environment, this will include
+the uClibc C library and busybox (for many size-optimised command
+line utilities).
+
+
+Requirements
+------------
+
+* What Does STUBS Need?
+
+- STUBS is entirely script-driven, so needs an external
+compiler/interpreter which meets the needs of the software being
+built. It is written for the Bourne-compatible 'ash' shell
+(specifically, 'ash' as built into busybox; it is subsequently usable
+from the Earlgrey linux environment if you've got the same
+corequisite compiler/interpreters installed there).
+
+  Note: All STUBS' scripts give outline help if run with 'help' as
+argument, or in the event of a usage error; see elsewhere in this
+document for guidance.
+
+* What Does Earlgrey Linux Need?
+
+- Since Earlgrey uses uClibc and busybox, its system requirements are
+quite small; Earlgrey's ramdisk fits comfortably on a floppy
+alongside a 2.0 series linux kernel, and runs enough utilities in
+just 4MB of RAM to bootstrap the 'egp' package installer and other
+STUBS utilities.
+
+  The Earlgrey initial ramdisk and floppy install various files with
+super-user ownership and permissions, so if these stages are relevant
+to you, you'll need the 'root' password for the machine you're
+building on. If you have a Knoppix build host, you'll need to set a
+root password before you start.
+
+
+Operational Overview
+--------------------
+
+* How Directory Layout Works
+
+  There are three directory trees relevant to these tools, generally
+(but not necessarily) all directly beneath some top level directory.
+The 'config' directory contains a 'stubs.cfg' file which (amongst
+several other things) specifies where exactly these lie: 
+
+	build			toolchain - generated
+	config			from distribution
+	package			output - generated
+	sources			software source files
+
+  The STUBS scripts extract to a directory under 'scripts' according
+to version; a script is therefore provided such that issuing
+`./scripts/setscripts ./scripts/stubs-0.6.5` (for example) will make
+symbolic links under 'scripts/' so that the stubs scripts available
+via './scripts/configure' (and so on) as these notes describe.
+
+
+* Script Invocation
+
+- In the building of the Earlgrey distribution, you will run:
+	./scripts/configure
+	./scripts/build toolchain
+	./scripts/build distro
+	./scripts/mogul mkinitrd
+	./scripts/mogul mkflop
+	./scripts/mogul mkiso
+
+  Other examples:
+	./scripts/build toolchain make
+	./scripts/build toolchain-host config/package/t/tar/1.13
+	./scripts/build distro make
+	./scripts/build distro-cross config/package/t/tar/1.13
+
+
+End Users' Walkthrough
+----------------------
+
+
+- Stage 1 - Preliminary Configuration [build/mogul]
+
+  Initialisation of the stubs.cfg file happens by invoking the
+'configure' script. Some updates are automatic (script location,
+adjustment for moving the top level directory) and some are manual
+and menu-driven; the individual scripts should advise you which are
+not set appropriately (note: some of the settings are superfluous if
+you're not building the Franki/Earlgrey distribution or some variant
+thereof).
+
+
+- Stage 2 - Acquire Sources [build/mogul]
+
+  The 'scripts' directory has a 'cfgmgr' script with an 'ensure'
+option which (according to the arguments supplied) makes sure the
+chosen distro/toolchain has all configuration files and associated
+sources locally available. It is capable of downloading any sources
+which are required, either forcibly replacing existing files or
+requesting just the absent ones.
+
+
+- Stage 3 - Build Toolchain/Utilities [build/mogul]
+
+  Toolchains can be built with either 'scripts/build toolchain'
+(recommended) or 'scripts/build toolchain-host <spec>' and
+'scripts/build toolchain-cross <spec>' for specific packages
+(depending whether you want host-runnable tools or support libraries
+for the target environment). <spec> should be a directory containing
+the package.cfg file (but can be full path to the package.cfg file
+itself).
+
+
+- Stage 4 - Build Distro's Packages [mogul]
+
+  There are two options for controlling this phase; again,
+'scripts/build build' should mastermind the whole process, with
+'scripts/build build-cross <spec>' being the fine-control method of
+driving the build process.
+
+ The resulting executables (in their packaged .egp files) are
+automatically placed in the packages/<distroname>/egp directory, so
+that 'mogul' can find them when building the initrd image.
+
+
+- Stage 5 - Final Distribution Preparation [mogul]
+
+  'mogul' has two final stages: 'mkinitrd' (to generate an
+initial-ramdisk image), and the disk-image generators 'mkflop' and
+'mkiso' (for a floppy and ISO image respectively). You may find you
+need to run 'configure' again between these stages, so the location
+of the kernel can be correctly detected.
+
+  The 'mkinitrd' and 'mkflop'/'mkiso' stages assume the need for
+root access in order to generate certain files (eg. root-fs device
+nodes and such), so will prompt for a password accordingly. If you
+have booted from a LiveCD environment, you may need to set the
+root password (with `sudo passwd root`) first.
+
+  The image files generated by the 'mkinitrd' and 'mkiso' stages
+appear in the package/<DISTRONAME> directory as either "floppy-image"
+or "iso-image", and can be written to floppy/CD (eg. with 'dd' or
+CDRtools respectively) - and should boot.
+
+
+The Build Process Explained
+---------------------------
+
+- The STUBS build process for individual packages is driven by a pair
+of files - a build script (build.sh) and a set of variables
+(package.cfg) noting, for example, source location before and after
+download and so on. Whole toolchains can be built via an index file
+that references several of these file pairs. These live in either
+config/toolchain or config/distro according to when they're needed,
+and 'configure' should be used to set which.
+  For building individual packages, the 'build' script accepts a first
+argument ("context") which gets passed to build.sh, and a second
+argument (the directory where build.sh is). For building a toolchain
+or subcomponent thereof, the "context" argument will be "toolchain"
+and followed by a package name (eg. "make") as listed in the first
+column of the index file.
+
+
+Package Configuration
+---------------------
+
+- Packages and toolchain components alike have a package.cfg file
+(basically a list of shell variables specifying the package name and
+version, the download URL, name of the top level directory within the
+downloaded source archive, and so on) and a corresponding 'build.sh'
+file (which is invoked by the 'build' script with an argument
+specifying one of a few standard short names descriptive of whether
+to build for a toolchain or cross-compiled environment).
+  In the event of an .egp package being the desired result, the name
+of that file can be specified with package.cfg's PACKAGE variable.
+Should there be many resulting .egp files, a "PREFIXES" needs to be
+specified (in which case the variables which specify the resulting
+'egp' file names and so on have "<PREFIX>_" prepended).
+
+  NB! I found a great deal of platform-specific cajoling necessary to
+get specific versions of one or two packages to build, even when the
+host and target environments were similar (I've exclusively used
+i386-uclibc-gcc as opposed to the 'gcc' front end to it, so as to
+leave the potential for subsituting it cleanly with another cross
+compiler). On the other hand, one or two of the packages were
+sufficiently picky about their configuration for me to pretty much
+guarantee a small fraction of resulting config files to be completely
+portable :)
+
+
+'EGP' Packages
+--------------
+
+- The 'egp' packages are a primitive extension of simple tar.gz
+format, comprising a 'files.tar' archive (containing whatever got
+built) together with an index (named 'files.idx' with identifying
+labels X, L, M, and F denoting executables, symbolic links, manual
+pages and other files). The 'egp' package installer can be run with
+the option not to install the manuals and thereby keep the initrd
+image unbloated, for example).
+
+
+Other Questions
+---------------
+
+* You use floppies and CDs. Will I find the kernel filenames to be
+similar on each?
+
+- Yes; a naming scheme for kernels and initial ramdisks has been
+chosen such that the kernel image named slaklinuz-2.0.37 will be
+renamed to 'slak2037.lx' in the final install. The 'mogul' script
+looks in package/<DISTRONAME>/kernels for the kernel, and in order
+to keep both syslinux and isolinux happy, strips out the 'linuz-'
+substring and '.' characters in the version.
+  Similarly, the initrd for the 'freg-0.3.4' distribution ends up as
+freg034.mnz (compressed minix filesystem).
+
+  A small issue with renaming happens where hyphens are renamed to
+underscores on installation, but this is outside of 'mogul''s
+control, and it is (perhaps) best not to hyphenate your distribution
+names.
+
+
+* What about kernel modules?
+
+- Kernel modules are indeed supported; loading of kernel modules is
+demonstrated by scripts in the 'rootdir' package - the earliest
+running example being in /etc/init.d/netprobe, and the slightly more
+complex /root/bin/modinst.sh scripts.
+  The 'netprobe' startup script assumes the boot device needs to be
+determined, and looks for modules.tgz in its root directory before
+extracting and inserting the relevant 'net' module. modinst.sh
+accepts the module path (eg. misc/psaux.o) and containing archive as
+arguments. Modules archives should contain the
+'modules/<KERNEL-VERSION>' tree (pruned from /lib after a `make
+modules_install` at the kernel build stage); due to limited access to
+various hardware, there's only support for detection of Realtek's
+8139 [rtl8139.o] or Intel's 82557 [eepro100.o].
+
+
+* Do kernels build? Can I import a ready-made one?
+
+- Importing a prebuilt kernel used to be necessary in early versions,
+and still is if you want a more recent kernel than there is a build
+script for.
+  While toolchains from version 0.3.15 and later dates do contain
+a compiler capable of building a 2.0-series kernel (in which case see
+the <TOOLCHAIN>/etc/<NAME-OF-DISTRO> for the result), you can always
+build your own kernel externally to the STUBS suite with just `make
+dep clean modules modules_install install` as normal. You can even
+use the STUBS toolchain's copy of the kernel sources to do this.
+  The 'configure' script will notice whether or not you lack kernels
+in the toolchain after it's built, in which case it will look for
+prebuilt kernels in package/<DISTRONAME>/kernels.
+
+  Linux From Scratch suggests generating static versions of 'make',
+'gcc', and 'bash' (possibly also 'patch') in order to bootstrap the
+generation of your own kernels. Use of partial environments to do
+this (eg, with shells other than bash?) is done at your own risk: at
+best your kernel won't report itself as being built by
+'buildaccount@your.domain.name', at worst your .config won't get
+turned into the relevant compile lines and the build will fail...
+
+  If you've acquired additional packages and accompanying libraries
+from somewhere else (eg slackware 3.9), bear in mind these may come
+with distro-dependent install scripts - if you're impatient,
+`ldconfig` may be sufficient to get you going. There may be other
+caveats, though - sw3.9's 'gcc-2.7.2.3' doesn't get either a 'gcc' or
+a 'cc' symlink when imported this way, for example.

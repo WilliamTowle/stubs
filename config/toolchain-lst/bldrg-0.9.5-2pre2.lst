@@ -1,0 +1,32 @@
+## "Black Dragon" extension-set
+## Since 2008-04-24 (bldrg-0.9.5 auth WmT)
+## Since 2008-04-24 (bldrg-0.9.5-pre1 auth WmT)
+#	autoconf -> 2.63
+## Last Modified 2008-06-22
+
+#perl			5.8.8		HOST
+#m4			1.4.4-fr1a	HOST
+m4			1.4.8	HOST
+autoconf		2.63		HOST
+ncurses			5.6		CROSS
+util-linux		2.12r-fr1c	HOST
+fakeroot		1.5.10ubuntu2	HOST
+bsd-errh		1-fr1b		CROSS
+
+automake		1.10.1		CROSS
+
+dpy			3.1-eg1c	CROSS
+
+jpegsrc			6b		CROSS
+
+libgpm			1.20.1-eg2d	CROSS
+libiconv		1.12		CROSS
+libmikmod		3.1.10-eg2c	CROSS
+
+openssl			0.9.7m		CROSS
+
+pcre			7.4		CROSS
+
+readline		5.2-fr1b	CROSS
+
+zlib			1.2.3-eg1b	CROSS
