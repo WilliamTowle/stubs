@@ -1,0 +1,286 @@
+#!/bin/sh
+##	build		(c)1999-2006 William Towle
+##	Last modified	14/10/2006, WmT
+##	Purpose		Package generation
+#
+#   Open Source software - copyright and GPLv2 apply. Briefly:
+#	- No warranty/guarantee of fitness, use is at own risk
+#	- No restrictions on strictly-private use/copying/modification
+#	- No re-licensing this work under more restrictive terms
+#	- Redistributing? Include/offer to deliver original source
+#   Philosophy/full details at http://www.gnu.org/copyleft/gpl.html
+
+
+BINDIR=`dirname $0`
+#. ${BINDIR}/scripts.cfg || exit 1
+. ${BINDIR}/lib/script-config || exit 1
+
+##
+##	subroutines
+##
+
+do_trackinst()
+{
+	PNAME=$1
+	PVERSION=$2
+
+	export DBROOT=${TCTREE}
+	if [ ! -r ${DBROOT}/opt/freglx/etc/pkgver.dat ] ; then
+		mkdir -p ${DBROOT}/opt/freglx/etc
+		${BINDIR}/instmgr.sh init || exit 1
+	fi
+	${BINDIR}/instmgr.sh upgrade ${PNAME} ${PVERSION} || exit 1
+}
+
+do_compile()
+{
+	handle_load || exit 1
+	# ensure BUILDTEMP not unset
+	[ "${BUILDTEMP}" ] || BUILDTEMP=`pwd`
+
+	BUILDSH=${BUILDTEMP}/build.sh
+	PKGCFG=${BUILDTEMP}/package.cfg
+	. ${PKGCFG} || exit 1
+
+	if [ -z "$1" ] ; then
+		echo "$0: No SYSCONF supplied"
+		exit 1
+	else
+		SYSCONF=$1
+		shift
+	fi
+	if [ -z "$1" ] ; then
+		echo "$0: do_compile(): No build.sh args supplied"
+		exit 1
+	fi
+
+	if [ ! -d ${BUILDTEMP}/source ] ; then
+		echo "No 'source/' subdir - package not extracted?"
+		exit 1
+	fi
+
+	[ "${PACKAGE}" ] && INSTTEMP=${BUILDTEMP}/files
+	if [ -z "${INSTTEMP}" ] ; then
+		echo "INSTTEMP unsupplied and not automatically determined" 1>&2
+		echo "(ie. no PACKAGE due to PREFIXES)" 1>&2
+		exit 1
+	fi
+
+	( cd ${BUILDTEMP}/source && eval "PATH=${REQPATH} SYSCONF=${SYSCONF} PKGFILE=${PKGCFG} INSTTEMP=${INSTTEMP} ${INSTDIRS} ${BUILDSH} $*" && cd - && do_trackinst ${PKGNAME} ${PKGVER}${PKGREV} )
+}
+
+create_egp()
+{
+	if [ -z "$1" ] ; then
+		echo "$0: create_egp(): No INSTDIR" 1>&2
+		exit 1
+	else
+		INSTDIR=$1
+		shift
+	fi
+
+	if [ -z "$1" ] ; then
+		echo "$0: create_egp(): No EGPNAME" 1>&2
+		exit 1
+	else
+		EGPNAME=$1
+		shift
+	fi
+
+	[ -z "${EGPDIR}" ] && EGPDIR=package/${USE_DISTRO}/egp
+	mkdir -p ${EGPDIR}
+	${BINDIR}/egp create ${EGPDIR}/${EGPNAME}.egp ${INSTDIR}
+}
+
+build_distro()
+{
+	while read QUERYLINE ; do
+		set -- ${QUERYLINE}
+		PKGDIR=$1
+		PKGFILE=${PKGDIR}/package.cfg
+		shift
+
+		# Sort path out (TODO: don't extend initial path by default)
+		REQPATH=${PATH}
+		for SUBDIR in bin usr/bin usr/local/bin \
+			usr/host-linux/bin opt/freglx/bin ; do
+
+			if [ -d ${TCTREE}/${SUBDIR} ] ; then
+				[ "${REQPATH}" ] && REQPATH=':'${REQPATH}
+				REQPATH=${TCTREE}/${SUBDIR}${REQPATH}
+			fi
+		done
+
+		PREFIXES=''
+		. ${PKGFILE} || exit 1
+
+		BUILDTEMP=${BUILD_DIR}/${PKGNAME}-${PKGVER}
+		mkdir -p ${BUILDTEMP} || exit 1
+		PATH=${REQPATH}:${PATH} \
+			${BINDIR}/extract ${PKGDIR} ${BUILDTEMP} || exit 1
+
+		if [ "${PREFIXES}" ] ; then
+			INSTDIRS=''
+			for PREF in ${PREFIXES} ; do
+				INSTDIRS=${INSTDIRS}" ${PREF}_INSTTEMP=${BUILDTEMP}/${PREF}-files"
+			done
+		else
+			INSTDIRS="INSTTEMP=${BUILDTEMP}/files"
+		fi
+
+		eval "PATH=${REQPATH} ${INSTDIRS} do_compile ${CONFIG_DIR}/stubs.cfg distro-cross" || exit 1
+
+		if [ -z "${*}${PREFIXES}" ] ; then
+			create_egp ${BUILDTEMP}/files ${PACKAGE} || exit 1
+		else
+			WANTED=${*}
+			[ "${WANTED}" ] || WANTED=${PREFIXES}
+			for PKG in ${WANTED} ; do
+				eval 'PACKAGE=`echo ${'${PKG}'_PACKAGE}`'
+				create_egp ${BUILDTEMP}/${PKG}-files ${PACKAGE} || exit 1
+			done
+		fi
+
+		case =${CLEAN} in
+		=y|=Y|=)	## explicit [Yy]es, or by default:
+			rm -rf ${BUILDTEMP} ;;
+		esac
+	done || exit 1
+}
+
+build_toolchain()
+{
+	while read QUERYLINE ; do
+		set -- ${QUERYLINE}
+		PKGDIR=$1
+		PKGFILE=${PKGDIR}/package.cfg
+		shift
+
+		# Sort path out (TODO: don't extend initial path by default)
+		REQPATH=${PATH}
+		for SUBDIR in bin usr/bin usr/local/bin \
+			usr/host-linux/bin opt/freglx/bin ; do
+
+			if [ -d ${TCTREE}/${SUBDIR} ] ; then
+				[ "${REQPATH}" ] && REQPATH=':'${REQPATH}
+				REQPATH=${TCTREE}/${SUBDIR}${REQPATH}
+			fi
+		done
+
+		. ${PKGFILE} || exit 1
+		BUILDTEMP=${BUILD_DIR}/${PKGNAME}-${PKGVER}
+		mkdir -p ${BUILDTEMP} || exit 1
+
+		PATH=${REQPATH} \
+			${BINDIR}/extract ${PKGDIR} ${BUILDTEMP} || exit 1
+
+		while [ "$*" ] ; do
+			case $1 in
+			CROSS)  PATH=${REQPATH} \
+				do_compile ${CONFIG_DIR}/stubs.cfg toolchain-cross || exit 1
+			;;
+			HOST)  PATH=${REQPATH} \
+				do_compile ${CONFIG_DIR}/stubs.cfg toolchain-host || exit 1
+			;;
+			*)	echo "$0: Bad OPTION $*" 1>&2
+				exit 1
+			;;
+			esac
+			shift
+		done
+
+		case =${CLEAN} in
+		=y|=Y|=)	## explicit [Yy]es, or by default:
+			rm -rf ${BUILDTEMP} ;;
+		esac
+	done || exit 1
+}
+
+handle_files()
+{
+	if [ -z "$1" ] ; then
+		echo "$0: ${QUERY}: Requires FILE[s]" 1>&2
+		exit 1
+	else
+		for FILE in $* ; do
+			if [ -f ${FILE} ] ; then
+				echo "$0: No -f handling: FILE ${FILE}" 1>&2
+				exit 1
+			elif [ -f ${FILE}/package.cfg ] ; then
+				case ${QUERY} in
+				distro-cross)	echo ${FILE} ;;
+				toolchain-cross) echo "${FILE} CROSS" ;;
+				toolchain-host)	echo "${FILE} HOST" ;;
+				*)		echo "$0: No -d handling: FILE ${FILE}" 1>&2
+						exit 1
+				esac \
+					|| exit 1
+			else
+				echo "$0: Confused (handle_files() FILE ${FILE} - no package.cfg?" 1>&2
+				exit 1
+			fi
+		done
+	fi
+}
+
+do_build()
+{
+	FR=`pwd`/build/toolchain/host-utils/usr/bin/fakeroot
+	[ -r ${FR} ] || FR=''
+
+	case ${QUERY} in
+	distro)
+		${BINDIR}/query ${QUERY} ${*} | ${FR} $0 build_distro
+	;;
+	toolchain)
+		${BINDIR}/query ${QUERY} ${*} | $0 build_toolchain
+	;;
+	distro-cross)
+		handle_files ${*} | EGPDIR=$PWD ${FR} $0 build_distro || exit 1
+	;;
+	toolchain-host|toolchain-cross)
+		handle_files ${*} | $0 build_toolchain
+	;;
+	*)
+		echo "$0: Confused: do_build() QUERY ${QUERY} UNIMPLEMENTED" 1>&2
+		exit 1
+	;;
+	esac
+}
+
+##
+## main program
+##
+
+COMMAND=$1
+[ "$1" ] && shift
+case ${COMMAND} in
+toolchain)	## build toolchain content [just PACKAGE[s]]
+	QUERY=toolchain do_build $* || exit 1
+	echo "$0: TOOLCHAIN phase OK"
+;;
+distro)		## build distro content [just PACKAGE[s]]
+	QUERY=distro do_build $* || exit 1
+	echo "$0: DISTRO phase OK"
+;;
+distro-cross|\
+toolchain-host|\
+toolchain-cross) ## ??
+	QUERY=${COMMAND} do_build $* || exit 1
+	echo "$0: BUILD ${COMMAND} phase OK"
+;;
+build_distro)	## internal use
+	build_distro
+;;
+build_toolchain)	## internal use
+	build_toolchain
+;;
+*)
+	if [ -n "${COMMAND}" -a "${COMMAND}" != 'help' ] ; then
+		echo "$0: Unrecognised command '${COMMAND}'"
+	fi
+	echo "$0: Usage:"
+	grep "^[0-9a-z-]*)" $0 | sed "s/^/	/"
+	exit 1
+;;
+esac

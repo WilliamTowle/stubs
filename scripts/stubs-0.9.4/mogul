@@ -1,0 +1,725 @@
+#!/bin/sh
+##	mogul		(c)1999-2006 William Towle
+##	Last modified	22/10/2006, WmT
+#
+#   Open Source software - copyright and GPLv2 apply. Briefly:
+#	- No warranty/guarantee of fitness, use is at own risk
+#	- No restrictions on strictly-private use/copying/modification
+#	- No re-licensing this work under more restrictive terms
+#	- Redistributing? Include/offer to deliver original source
+#   Philosophy/full details at http://www.gnu.org/copyleft/gpl.html
+
+##
+##	global config
+##
+
+TOPLEV=`pwd`
+CFGTREE=${TOPLEV}/config
+CFGFILE=${CFGTREE}/stubs.cfg
+
+##
+##	subroutines
+##
+
+load_config()
+{
+	FILE=$1
+
+	if [ "${NEEDS}" != '' ] ; then
+		MISSING=n
+		for NEED in ${NEEDS} ; do
+			LINE=`grep "^${NEED}=." ${FILE}`
+			if [ "${LINE}" = '' ] ; then
+				echo "$0: ...no ${NEED} configured"
+				MISSING=y
+			fi
+			[ ${MISSING} = 'n' ]
+		done || MISSING=y
+		[ ${MISSING} = 'y' ] &&  exit 1
+	fi
+
+	[ -r ${FILE} ] && . ${FILE}
+
+	if [ `dirname $0` != ${SCRIPTDIR} ] ; then
+		if [ "${FORCE}" != y ] ; then
+			echo "Did you mean ${SCRIPTDIR}/`basename $0` ... or FORCE=y?"
+			exit 1
+		fi
+	fi
+}
+
+make_rootdirs()
+{
+	if [ "${UID}" != 0 -a "${UID}" ] ; then
+		echo "Failed: you are not root"
+		exit 1
+	fi
+
+	ROOTDIR=$1
+	if [ -z "${ROOTDIR}" ] ; then
+		echo "Failed: ROOTDIR not supplied"
+		exit 1
+	fi
+
+	( cd ${ROOTDIR} && (
+		## directories
+		mkdir bin boot dev etc home mnt lib \
+			opt proc root sbin usr tmp var
+		mkdir var/run var/tmp
+		( cd usr && ln -sf ../var/tmp ./ )
+		chmod 1777 tmp var/tmp
+
+		( cd etc && (
+			cat <<EOF >group
+root::0:root
+EOF
+			cat <<EOF >passwd
+root::0:0:root:/root:/bin/sh
+EOF
+		)) || exit 1
+	) || exit 1 ) || exit 1
+}
+
+make_devs()
+{
+	if [ "${UID}" != 0 -a "${UID}" ] ; then
+		echo "Failed: you are not root"
+		exit 1
+	fi
+
+	ROOTDIR=$1
+	if [ -z "${ROOTDIR}" ] ; then
+		echo "Failed: ROOTDIR not supplied"
+		exit 1
+	fi
+
+	( cd ${ROOTDIR}/dev && (
+		mknod console c 5 1
+		mknod full c 1 7
+		mknod kmem c 1 2
+		mknod mem c 1 1
+		mknod null c 1 3
+		mknod port c 1 4
+		mknod psaux c 10 1
+		mknod random c 1 8
+		mknod urandom c 1 9
+		mknod zero c 1 5
+		ln -sf /proc/kcore core
+
+		# IDE FD devs
+		mknod fd0 b 2 0
+		mknod fd0h720 b 2 24
+		mknod fd0u720 b 2 16
+		mknod fd1 b 2 1
+		mknod fd1h720 b 2 25
+		mknod fd1u720 b 2 17
+
+		# IDE HD devs
+		# note: not going to bother creating all
+		# concievable partitions; that can be done
+		# from within the installed OS
+		mknod hda b 3 0
+			mknod hda1 b 3 1
+			mknod hda2 b 3 2
+			mknod hda3 b 3 3
+			mknod hda4 b 3 4
+			mknod hda5 b 3 5
+			mknod hda6 b 3 6
+			mknod hda7 b 3 7
+		mknod hdb b 3 64
+			mknod hdb1 b 3 65
+			mknod hdb2 b 3 66
+			mknod hdb3 b 3 67
+			mknod hdb4 b 3 68
+			mknod hdb5 b 3 69
+			mknod hdb6 b 3 70
+			mknod hdb7 b 3 71
+		mknod hdc b 22 0
+			mknod hdc1 b 22 1
+			mknod hdc2 b 22 2
+			mknod hdc3 b 22 3
+			mknod hdc4 b 22 4
+			mknod hdc5 b 22 5
+			mknod hdc6 b 22 6
+			mknod hdc7 b 22 7
+		mknod hdd b 22 64
+			mknod hdd1 b 22 65
+			mknod hdd2 b 22 66
+			mknod hdd3 b 22 67
+			mknod hdd4 b 22 68
+			mknod hdd5 b 22 69
+			mknod hdd6 b 22 70
+			mknod hdd7 b 22 71
+
+		# loop devs
+		for i in 0 1 2 3 4 5 6 7 ; do
+			mknod loop$i b 7 $i
+		done
+
+		# ram devs
+		for i in 0 1 2 3 4 5 6 7 8 9 ; do
+			mknod ram$i b 1 $i
+		done
+		ln -sf ram0 ram
+
+		# ttys
+		mknod tty c 5 0
+		for i in 0 1 2 3 4 5 6 7 8 9 ; do
+			mknod tty$i c 4 $i
+		done
+
+		# virtual console screen devs
+		for i in 0 1 2 3 4 5 6 7 8 9 ; do
+			mknod vcs$i b 7 $i
+		done
+		ln -sf vcs0 vcs
+
+		# virtual console screen w/ attributes devs
+		for i in 0 1 2 3 4 5 6 7 8 9 ; do
+			mknod vcsa$i b 7 $i
+		done
+		ln -sf vcsa0 vcsa
+
+		# on kingpin: dsp{0,1,2,3} c 14 {3,19,35,51}
+		mknod dsp c 14 3
+		mknod audio c 14 4
+	) || exit 1 ) || exit 1
+}
+
+do_mkiso()
+{
+	NEEDS='USE_DISTRO USE_KERNEL' load_config ${CFGFILE} || exit 1
+
+	DISTROOT=${LOC_DISTROS}/${USE_DISTRO}
+	DISTTMP=${TOPLEV}/package/${USE_DISTRO}
+	KERNEL=${LOC_KERNELS}/${USE_KERNEL}
+	MASTERDIR=${TOPLEV}/iso-master/
+	INITRD=${DISTTMP}/initrd
+
+	ISO=$1
+	[ -z "${ISO}" ] && ISO=${DISTTMP}/iso-image
+
+	KNAME=`basename ${KERNEL} | sed 's/linuz-//' | sed 's/\.//g' | sed 's/-[a-z].*//'`.lx
+
+	if [ ! -r ${INITRD} ] ; then
+		echo "$0: do_mkiso(): No INITRD prepared"
+		exit 1
+	fi
+	if [ ! -r ${KERNEL} ] ; then
+		echo "$0: do_mkflop(): KERNEL not found?!"
+		exit 1
+	fi
+
+	if [ -r ${TCTREE}/opt/freglx/bin/detect-config ] ; then
+		PHASE=build . ${TCTREE}/opt/freglx/bin/detect-config || exit 1
+	else
+		FR_TH_ROOT=${TCTREE}
+	fi
+	export SYSLDIR=${FR_TH_ROOT}/usr/lib/syslinux
+	export SYSLBIN=${FR_TH_ROOT}/usr/bin
+	export MEMTDIR=${FR_TH_ROOT}/usr/lib/memtest86
+	if [ ! -d ${SYSLDIR} ] ; then
+		echo "$0: SYSLDIR ${SYSLDIR} not directory"
+		exit 1
+	fi
+	if [ ! -x ${SYSLBIN}/syslinux ] ; then
+		echo "$0: ${SYSLBIN}/syslinux: not found"
+		exit 1
+	fi
+	if [ ! -x ${FR_TH_ROOT}/usr/bin/mkisofs ] ; then
+		echo "$0: No mkisofs executable"
+		exit 1
+	fi
+
+	DPYFILE=boot.dpy
+	BOOTPATH=boot/isolinux
+
+	mkdir -p ${MASTERDIR}/${BOOTPATH}
+
+	cp ${SYSLDIR}/isolinux.bin ${MASTERDIR}/${BOOTPATH}/ || exit 1
+	cp ${SYSLDIR}/memdisk ${MASTERDIR}/${BOOTPATH}/ || exit 1
+	if [ -r ${MEMTDIR}/memtest.bin ] ; then
+		cp ${MEMTDIR}/memtest.bin ${MASTERDIR}/${BOOTPATH}/ || exit 1
+	fi
+
+	# assume USE_DISTRO to go from "foo-x.y.z-n" to "fooxyz"
+	RDNAME=`echo ${USE_DISTRO} | sed 's/-[0-9]*$// ; s/pre[0-9]*$// s/rc[0-9]*$// ; s/[-_\.]//g'`
+
+	cat ${INITRD} | gzip -9 > ${MASTERDIR}/${BOOTPATH}/${RDNAME}.mnz
+
+	cp ${LOC_KERNELS}/${USE_KERNEL} ${MASTERDIR}/${BOOTPATH}/${KNAME} || exit 1
+
+	cat > ${MASTERDIR}/${BOOTPATH}/isolinux.cfg << EOF
+#SAY about to DISPLAY catfile ${DPYFILE}
+DISPLAY ${DPYFILE}
+F1 ${DPYFILE}
+#DISPLAY syslinux.dpy
+TIMEOUT 100
+
+# NOTE!! "freg-dev.mnz" gets renamed "freg_dev.mnz"!
+
+DEFAULT unspecified-kernel load_ramdisk=1 ramdisk_size=${INITRD_SIZE} initrd=${RDNAME}.mnz initrd_archive=${INITRD_FS} root=/dev/ram boot=/dev/cdrom,msdos
+
+LABEL freg
+	KERNEL ${KNAME}
+	APPEND load_ramdisk=1 ramdisk_size=${INITRD_SIZE} initrd=${RDNAME}.mnz initrd_archive=${INITRD_FS} root=/dev/ram boot=/dev/cdrom,msdos
+
+LABEL fregwapm
+	KERNEL wapm2040.lx
+	APPEND load_ramdisk=1 ramdisk_size=${INITRD_SIZE} initrd=${RDNAME}.mnz initrd_archive=${INITRD_FS} root=/dev/ram boot=/dev/cdrom,msdos
+
+LABEL fregxapm
+	KERNEL xapm2040.lx
+	APPEND load_ramdisk=1 ramdisk_size=${INITRD_SIZE} initrd=${RDNAME}.mnz initrd_archive=${INITRD_FS} root=/dev/ram boot=/dev/cdrom,msdos
+
+LABEL fixide
+	KERNEL ${KNAME}
+	APPEND ide0=noprobe ide0=0x1f0,0x3f6,14
+
+LABEL floppy
+	LOCALBOOT 0x00
+
+LABEL hard
+	LOCALBOOT 0x80
+
+# works on real hardware (bochs v2.0.2 blows chunks though)
+LABEL fail
+	LOCALBOOT -1
+
+# ...obviously the CD is read-only - hence updating /etc/mtab fails
+LABEL hdb
+	KERNEL ${KNAME}
+	APPEND root=/dev/hdb rw
+
+# ...in fact, all specific devices are read-only by default...
+LABEL hda5
+	KERNEL ${KNAME}
+	APPEND root=/dev/hda5 rw
+
+# Long file names get irretrievably mangled :(
+# ...claims "invalid file" with the 8+3-compliant name :(
+LABEL game
+	KERNEL memdisk
+	APPEND initrd=dosgames.dsk
+
+LABEL fatgrub
+	KERNEL memdisk
+	APPEND initrd=fatgrub.dsk
+
+LABEL wmfd
+	KERNEL memdisk
+	APPEND initrd=wmfdboot.dsk
+
+LABEL memtest
+	KERNEL memtest.bin
+EOF
+
+	C=`echo -e "\017"`
+	BQ='`'
+	FQ="'"
+	DPYDIR=${TCTREE}/etc/${USE_DISTRO}
+	if [ -r ${DPYDIR}/isolinux.dpy ] ; then
+		cp ${DPYDIR}/isolinux.dpy ${MASTERDIR}/${BOOTPATH}/${DPYFILE}
+	else
+		cat <<EOF > ${MASTERDIR}/${BOOTPATH}/${DPYFILE}
+${C}06| ${C}01 ,------------------------------------------.
+${C}06| ${C}01 | ${C}02FRANKI/EARLGREY LINUX DEVELOPMENT BOOTCD ${C}01|
+${C}06| ${C}01 ${BQ}------------------------------------------${FQ}
+${C}06| 
+${C}06| ${C}0cAt "boot:" prompt, enter one of:
+${C}06| ${C}0e -freg ${C}03- latest franki linux with ramdisk
+${C}06| 
+${C}06| ${C}0e -floppy, hard ${C}03- boot FDU/HDU through LOCALBOOT directive
+${C}06| ${C}0e -floppybs, hardbs ${C}03- boot FDU/HDU through freeDOS boot sectors
+${C}06| ${C}0e -floppysl ${C}03 - boot FDU through syslinux boot sector
+${C}06| 
+${C}06| ${C}0e -wmfd ${C}03- boot Wills' FreeDOS through MEMDISK
+${C}06| ${C}0e -hda5, hdb ${C}03- boot latest linux with specifed root device
+${C}06| 
+${C}06| ...Repeat this help message by pressing 'F1'
+${C}06\`-----------------------------------------------------------------------------${C}07
+EOF
+		echo "("`date`")" >> ${MASTERDIR}/${BOOTPATH}/${DPYFILE}
+	fi
+
+#	NB. '-R' is 'Rock Ridge' (Unix-friendly) extensions; this
+#	preserves user/owner/group perhaps too well! Try 'rational
+#	rock', which decreases the traditional normal-user security
+	${FR_TH_ROOT}/usr/bin/mkisofs -r -o ${ISO} \
+		-b ${BOOTPATH}/isolinux.bin -c ${BOOTPATH}/boot.cat \
+		-no-emul-boot -boot-load-size 4 -boot-info-table \
+		${MASTERDIR} || exit 1
+#	${TOOLROOT}/usr/bin/mkisofs -R -o ${ISO} \
+#		-b ${BOOTPATH}/isolinux.bin \
+#		-no-emul-boot -boot-load-size 4 -boot-info-table \
+#		${MASTERDIR}
+	echo ; cat <<EOF
+Advice
+======
+ISO FILE ${ISO} NOW BUILT :)
+
+See \`cdrecord -scanbus\` as root to identify device and characteristics
+...and burn image with \`cdrecord -v speed=8 dev=0,4,0 -data
+	${ISO}\`
+EOF
+}
+
+check_package()
+{
+	CATALOGUE=$1
+	PKGNAME=$2
+	PKGVER=$3
+
+	echo -n "${PKGNAME} ${PKGVER}: "
+	PKGFILE=${CFGTREE}/package/`echo ${PKGNAME} | cut -c1 | tr 'A-Z' 'a-z'`/${PKGNAME}/${PKGVER}/package.cfg
+	LOC_PACKAGES=${TOPLEV}/package/${USE_DISTRO}/egp
+
+	OOPS=n
+	if [ ! -r ${PKGFILE} ] ; then
+		echo "*** NO CONFIG ***"
+		OOPS=y
+	else
+		PREFIXES=""
+		NEEDS='' load_config ${PKGFILE}
+
+		if [ "${PREFIXES}" ] ; then
+			while [ "$4" ] ; do
+				PREFIX=$4
+				shift
+
+				grep ^${PREFIX}_PACKAGE ${PKGFILE} | sed "s/^${PREFIX}_//" > tmp.$$
+				if [ ! -s tmp.$$ ] ; then
+					echo -n "*** BAD PREFIX ${PREFIX} *** " ; OOPS=y
+					rm tmp.$$
+				else
+					. tmp.$$
+					rm tmp.$$
+					echo -n "(${PREFIX}) "
+					FILE=${LOC_PACKAGES}/${PACKAGE}.egp
+					if [ -r ${FILE} ] ; then
+						echo ${FILE} >> ${CATALOGUE}
+						echo -n "OK "
+					else
+						echo -n "*** FAILED *** " ; OOPS=y
+					fi
+				fi
+			done
+			echo
+		elif [ -r ${LOC_PACKAGES}/${PACKAGE}.egp ] ; then
+			echo ${LOC_PACKAGES}/${PACKAGE}.egp >> ${CATALOGUE}
+			echo "OK"
+		else
+			echo "*** NOT BUILT ***"
+			OOPS=y
+		fi
+	fi
+	[ ${OOPS} = 'n' ]
+}
+
+_sume_initrd()
+{
+	if [ "${UID}" != 0 -a "${UID}" ] ; then
+		echo "$0 _sume_initrd() failed - you are not root"
+		exit 1
+	fi
+
+	INITRD=$1
+	INITRD_FS=$2
+	CATALOGUE=$3
+	mkdir tmp.$$
+	mount -t ${INITRD_FS} -o loop ${INITRD} tmp.$$
+	$0 mkrootdirs tmp.$$
+	$0 mkdevs tmp.$$
+	grep -v '^#' ${CATALOGUE} | while read SPEC ; do
+		case ${SPEC} in
+		?*)	echo "[ ${SPEC} ]"
+			`dirname $0`/egp install tmp.$$ ${SPEC} || exit 1
+		;;
+		esac
+	done
+	umount tmp.$$
+	rmdir tmp.$$
+}
+
+do_mkinitrd()
+{
+	NEEDS="LOC_DISTROS USE_DISTRO INITRD_SIZE INITRD_FS" load_config ${CFGFILE} || exit 1
+
+	FLOPCFG=${LOC_DISTROS}/${USE_DISTRO}.lst
+
+	DISTTMP=${TOPLEV}/package/${USE_DISTRO}
+	mkdir -p ${DISTTMP}
+	INITRD=${DISTTMP}/initrd
+	CATALOGUE=${DISTTMP}/initrd.cat
+
+	if [ ! -r ${FLOPCFG} ] ; then
+		echo "$0: no" `basename ${FLOPCFG}` "for distro ${USE_DISTRO}"
+		exit 1
+	fi
+
+	FAILED=n
+	echo "[Checking build status]"
+	echo -n '' > ${CATALOGUE}
+	grep -v '^#' ${FLOPCFG} | while read SPEC ; do
+		case ${SPEC} in
+		?*)	check_package ${CATALOGUE} ${SPEC} || FAILED=y
+		;;
+		esac
+		[ "${FAILED}" = 'n' ]
+	done || FAILED=y
+	if [ "${FAILED}" = 'y' ] ; then
+		echo
+		echo "*** ABORTING *** -there were errors"
+		exit 1
+	fi
+
+##	==
+##	initrd
+##	==
+
+	echo "[ preparing initrd ${INITRD} ]"
+	dd if=/dev/zero of=${INITRD} bs=1k count=${INITRD_SIZE}
+	/sbin/mkfs -t ${INITRD_FS} ${INITRD}
+
+	echo "[ populating initrd ]"
+	if [ "${UID}" != 0 -a "${UID}" ] ; then
+		echo -n "Root " ; su root $0 _sume_initrd ${INITRD} ${INITRD_FS} ${CATALOGUE}
+	fi
+}
+
+do_mkflop()
+{
+	NEEDS="LOC_DISTROS USE_DISTRO LOC_KERNELS USE_KERNEL TCTREE" load_config ${CFGFILE} || exit 1
+
+	DISTROOT=${LOC_DISTROS}/${USE_DISTRO}
+	DISTTMP=${TOPLEV}/package/${USE_DISTRO}
+	KERNEL=${LOC_KERNELS}/${USE_KERNEL}
+	INITRD=${DISTTMP}/initrd
+
+	if [ ! -r ${INITRD} ] ; then
+		echo "$0: do_mkflop(): No INITRD prepared"
+		exit 1
+	fi
+	if [ ! -r ${KERNEL} ] ; then
+		echo "$0: do_mkflop(): KERNEL not found?!"
+		exit 1
+	fi
+
+	FLOPPY=$1
+	[ -z "${FLOPPY}" ] && FLOPPY=${DISTTMP}/floppy-image
+
+	if [ -r ${TCTREE}/opt/freglx/bin/detect-config ] ; then
+		PHASE=build . ${TCTREE}/opt/freglx/bin/detect-config || exit 1
+	else
+		FR_TH_ROOT=${TCTREE}
+	fi
+	export SYSLDIR=${FR_TH_ROOT}/usr/lib/syslinux
+	export SYSLBIN=${FR_TH_ROOT}/usr/bin
+	export MEMTDIR=${FR_TH_ROOT}/usr/lib/memtest86
+	if [ ! -d ${SYSLDIR} ] ; then
+		echo "$0: SYSLDIR ${SYSLDIR} not directory"
+		exit 1
+	fi
+	if [ ! -x ${SYSLBIN}/syslinux ] ; then
+		echo "$0: No syslinux executable"
+		exit 1
+	fi
+	if [ ! -d ${SYSLDIR} ] ; then
+		echo "$0: SYSLDIR ${SYSLDIR} not directory"
+		exit 1
+	fi
+
+# ...(re)generate image file/content on device
+	[ -b ${FLOPPY} ] || dd if=/dev/zero of=${FLOPPY} bs=1k count=1440
+	/sbin/mkfs -t msdos ${FLOPPY} || exit 1
+
+	[ -z ${TMPDIR} ] && TMPDIR=./tmp.$$
+	if [ -d ${TMPDIR} ] ; then
+		HADTMP=y
+	else
+		mkdir ${TMPDIR}
+		HADTMP=n
+	fi
+
+	if [ "${UID}" != 0 -a "${UID}" ] ; then
+		SUCMD='su root'
+		echo -n "Root "
+	fi
+	${SUCMD} $0 _sume_floppy ${TCTREE} ${FLOPPY} ${TMPDIR} ${KERNEL} ${INITRD} freg-dev || exit 1
+
+	[ "${HADTMP}" = 'n' ] && /bin/rm -rf "${TMPDIR}"
+}
+
+mkdpy()
+{
+	C=`echo -e "\017"`
+	X=`echo -e "\xb0"`
+	Y=`echo -e "\xb1"`
+	Z=`echo -e "\xb2"`
+	BQ='`'
+	FQ="'"
+
+# (27/08/2005) Date length to suit (up to) four-letter timezone codes
+	cat <<EODPY | sed "s/DD*D/`date`/"
+ ${C}05,----------------------------------------------------------------------------.
+ ${C}05| ${C}04${X}${Y}${Z}${C}03It${FQ}s ${C}04${Z}${Y}${X}                        ${C}01,-------------------------------------. ${C}05|
+ ${C}05| ${C}04${X}${Y}${Z}${C}03ALIVE${C}04${Z}${Y}${X}                        ${C}01| ${C}02Franki/Earlgrey Linux ver."TooSoon" ${C}01| ${C}05|
+ ${C}05| ${C}04${X}${Y}${Z}${C}03!!!!!${C}04${Z}${Y}${X}                        ${C}01${BQ}-------------------------------------${FQ} ${C}05|
+ ${C}05|                  ${C}06Build date: DDDDDDDDDDDDDDDDDDDDDDDDDDDDD                 ${C}05|
+ ${C}05${BQ}----------------------------------------------------------------------------${FQ}${C}07
+EODPY
+}
+
+_sume_floppy()
+{
+	NEEDS="INITRD_SIZE INITRD_FS" load_config ${CFGFILE}
+
+	TCTREE=$1
+	FLOPPY=$2
+	MNTDIR=$3
+	KERNEL=$4
+	INITRD=$5
+
+	KNAME=`basename ${KERNEL} | sed 's/linuz-//' | sed 's/\.//g' | sed 's/-[a-z].*//'`.lx
+	RDNAME=`echo ${USE_DISTRO} | sed 's/-[0-9]*$//; s/pre[0-9]*$//; s/rc[0-9]*$//; s/[-_\.]//g'`
+
+	/sbin/losetup /dev/loop0 ${FLOPPY} || exit 1
+	mount /dev/loop0 ${MNTDIR} || exit 1
+
+	DPYDIR=${TCTREE}/etc/${USE_DISTRO}
+	if [ -r ${DPYDIR}/syslinux.dpy ] ; then
+		cp ${DPYDIR}/syslinux.dpy ${MNTDIR}/syslinux.dpy
+	else
+		mkdpy > ${MNTDIR}/syslinux.dpy
+	fi
+	
+	# syslinux 3.09 doesn't use '#' for comments (unlike 2.x)
+	sed 's/^#//' <<EOF >${MNTDIR}/syslinux.cfg | sed 's/^#//'
+#FONT some8x16.psf
+DISPLAY syslinux.dpy
+#PROMPT 0
+SAY (Boot will commence in 10 seconds unless manually overridden)
+PROMPT 1
+TIMEOUT 100
+DEFAULT linux load_ramdisk=1 ramdisk_size=${INITRD_SIZE} initrd=${RDNAME}.mnz initrd_archive=${INITRD_FS} root=/dev/ram0 boot=/dev/fd0,msdos
+
+LABEL linux
+	KERNEL ${KNAME}
+
+LABEL fixide
+	KERNEL ${KNAME}
+	APPEND ide0=noprobe ide0=0x1f0,0x3f6,14
+EOF
+
+	(
+		cp ${KERNEL} ${MNTDIR}/${KNAME} || exit 1
+
+		MODDIR=${TCTREE}/etc/${USE_DISTRO}/modules/
+		MODSUB=`basename ${KERNEL} | sed 's/[a-z]*-//'`
+		if [ -d ${MODDIR}/${MODSUB} ] ; then
+			KERVER=`echo ${MODSUB} | sed 's/-[a-z]*$//'`
+			( cd ${MODDIR} &&
+				[ -r ${KERVER} ] || ln -sf ${MODSUB} ${KERVER} || exit 1
+				cd ../
+#				tar cvf - modules/${KERVER}/fs \
+#					modules/${KERVER}/net \
+#					modules/${KERVER}/paride
+				tar cvf - modules/${KERVER}/*/*.o
+			) | gzip -9 > ${MNTDIR}/modules.tgz
+		fi
+
+		cat ${INITRD} | gzip -9 > ${MNTDIR}/${RDNAME}.mnz
+	) || exit 1
+
+	umount /dev/loop0 || exit 1
+	${SYSLBIN}/syslinux /dev/loop0 || exit 1
+	/sbin/losetup -d /dev/loop0 || exit 1
+}
+
+make_toolchain()
+{
+	NEEDS="USE_TOOLCHAIN" load_config ${CFGFILE}
+
+	TCDIR=${LOC_TOOLCHAINS}/${USE_TOOLCHAIN}
+	if [ ! -d ${TCDIR} ] ; then
+		echo "$0: TCDIR ${TCDIR} not found"
+		exit  1
+	fi
+
+	`dirname $0`/build tcbuild ${TCDIR}/packages/[a-z0-9]* || exit 1
+}
+
+make_egps()
+{
+	NEEDS="USE_DISTRO" load_config ${CFGFILE}
+
+	DPDIR=${LOC_DISTROS}/${USE_DISTRO}
+       ## NB: LOC_DISTROS / USE_DISTRO ,lst
+	if [ ! -d ${DPDIR} ] ; then
+		echo "$0: DPDIR ${DPDIR} not found"
+		exit  1
+	fi
+
+	if [ -z "${PKGDIR}" ] ; then
+		EGPDIR=package/${USE_DISTRO}/egp
+		[ -d ${EGPDIR} ] || [ -d `dirname ${EGPDIR}` ] && mkdir ${EGPDIR}
+	else
+		EGPDIR=${PKGDIR}
+	fi
+	if [ ! -d ${EGPDIR} ] ; then
+		echo "$0: EGPDIR ${EGPDIR} not found"
+		exit 1
+	fi
+
+	if [ -r ${DPDIR}/floppy.lst ] ; then
+		PKGDIR=${EGPDIR} `dirname $0`/build build ${DPDIR}/floppy.lst || exit 1
+	else
+		PKGDIR=${EGPDIR} `dirname $0`/build build ${DPDIR}/packages/[a-z0-9]* || exit 1
+	fi
+}
+
+##
+##	main program
+##
+
+COMMAND=$1
+[ "$1" ] && shift
+case ${COMMAND} in
+mkrootdirs)	## generate base directory tree
+	make_rootdirs $* || exit 1
+	echo "$0: MKROOTDIRS phase OK"
+;;
+mkdevs)		## generate static /dev content
+	make_devs $* || exit 1
+	echo "$0: MKDEVS phase OK"
+;;
+mkinitrd)	## generate initrd image
+	do_mkinitrd $* || exit 1
+	echo "$0: MKINITRD phase OK"
+;;
+_sume_initrd)	## internal use
+	_sume_initrd $* || exit 1
+;;
+mkflop)		## generate floppy image [OPTIONAL name/device]
+	do_mkflop $* || exit 1
+	echo "$0: MKFLOP phase OK"
+;;
+_sume_floppy)	## internal use
+	_sume_floppy $* || exit 1
+;;
+_mkdpy)		## internal use
+	mkdpy $* || exit 1
+;;
+mkiso)		## generate iso image [OPTIONAL name]
+	do_mkiso $* || exit 1
+	echo "$0: MKISO phase OK"
+;;
+*)
+	if [ -n "${COMMAND}" -a "${COMMAND}" != 'help' ] ; then
+		echo "$0: Unrecognised command '${COMMAND}'"
+	fi
+	echo "$0: Usage:"
+	grep "^[0-9a-z]*)" $0 | sed "s/^/	/"
+	exit 1
+;;
+esac

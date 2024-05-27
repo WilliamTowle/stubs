@@ -1,0 +1,67 @@
+##!/bin/sh
+##	script-config	(c)1999-2006 William Towle
+##	Last modified	22/10/2006, WmT
+##	Purpose		Common script configuration management
+#
+#   Open Source software - copyright and GPLv2 apply. Briefly:
+#	- No warranty/guarantee of fitness, use is at own risk
+#	- No restrictions on strictly-private use/copying/modification
+#	- No re-licensing this work under more restrictive terms
+#	- Redistributing? Include/offer to deliver original source
+#   Philosophy/full details at http://www.gnu.org/copyleft/gpl.html
+
+
+TOPLEV=`pwd`
+CONFIG_DIR=${TOPLEV}/config
+TCHAIN_DIR=${CONFIG_DIR}/toolchain-lst
+DISTRO_DIR=${CONFIG_DIR}/distro-lst
+PKGCFG_DIR=${CONFIG_DIR}/package
+SOURCE_DIR=${TOPLEV}/sources
+BUILD_DIR=${TOPLEV}/build
+
+handle_load()
+{
+	if [ "${1}" ] ; then
+		FILE=${CONFIG_DIR}/$1
+	else
+		FILE=${CONFIG_DIR}/stubs.cfg
+	fi
+
+	LOAD_OK=n
+	# don't fall over if there isn't a file yet:
+	grep ^[A-Z] ${FILE} > tmp.$$ 2>/dev/null
+	# ...but if we can't write a tempfile, that's bad:
+	. ./tmp.$$ && LOAD_OK=y
+
+	rm tmp.$$ 2>/dev/null
+	[ ${LOAD_OK} = 'y' ]
+}
+
+handle_save()
+{
+	if [ "${1}" ] ; then
+		FILE=${CONFIG_DIR}/$1
+	else
+		FILE=${CONFIG_DIR}/stubs.cfg
+	fi
+
+	echo "# $0 `date`"			> ${FILE}
+	echo "TCHAIN_DIR=${TCHAIN_DIR}"		>> ${FILE}
+	echo "DISTRO_DIR=${DISTRO_DIR}"		>> ${FILE}
+	echo "KERNEL_DIR=${KERNEL_DIR}"		>> ${FILE}
+	echo "USE_TOOLCHAIN=${USE_TOOLCHAIN}"	>> ${FILE}
+	echo "USE_DISTRO=${USE_DISTRO}"		>> ${FILE}
+	echo "USE_KERNEL=${USE_KERNEL}"		>> ${FILE}
+	echo "NUM_STAGES=${NUM_STAGES}"		>> ${FILE}
+	echo "#"				>> ${FILE}
+	echo "TARGET_CPU=${TARGET_CPU}"		>> ${FILE}
+	echo "#HOMEDIR=/home/devel/mk2"		>> ${FILE}
+	echo "#HOMEDIR=/work/freglx/stubs-mk2"	>> ${FILE}
+	echo "HOMEDIR=${HOMEDIR}"		>> ${FILE}
+	echo "BUILDROOT=\${HOMEDIR}/build"	>> ${FILE}
+	echo "TCTREE=\${BUILDROOT}/toolchain"	>> ${FILE}
+	echo "SOURCETREE=\${HOMEDIR}/sources"	>> ${FILE}
+	echo "#"				>> ${FILE}
+	echo "INITRD_SIZE=${INITRD_SIZE}"	>> ${FILE}
+	echo "INITRD_FS=${INITRD_FS}"	>> ${FILE}
+}
